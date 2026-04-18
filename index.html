@@ -1,397 +1,2756 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QG BAC — Système de Performance</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        /* ═══════════════════════════════════════════════════════
-           RESET & VARIABLES
-        ═══════════════════════════════════════════════════════ */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        :root {
-            --bg: #080808; --bg2: #0f0f0f; --bg3: #161616;
-            --border: rgba(255,255,255,0.07); --border-hover: rgba(255,255,255,0.18);
-            --text: #f0f0f0; --muted: #6b6b6b; --muted2: #999; --white: #ffffff;
-            --accent: #e8e0d0; --gold: #c9a84c; --gold2: #f0d080;
-            --green: #5a9e6f; --red: #c0504a; --blue: #4a7fc0;
-            --radius: 16px; --radius-sm: 10px;
-            --font-display: 'DM Serif Display', Georgia, serif;
-            --font-ui: 'Syne', sans-serif;
-            --font-mono: 'DM Mono', monospace;
-            --transition: .3s cubic-bezier(.25,1,.5,1);
-            --sidebar-width: 240px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QG BAC — Système de Performance Académique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   RESET & ROOT
+═══════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            background: var(--bg); color: var(--text);
-            font-family: var(--font-ui); font-size: 14px;
-            line-height: 1.6; min-height: 100vh; overflow-x: hidden;
-        }
+:root {
+–bg: #080808;
+–bg2: #0f0f0f;
+–bg3: #161616;
+–border: rgba(255,255,255,0.07);
+–border-hover: rgba(255,255,255,0.18);
+–text: #f0f0f0;
+–muted: #6b6b6b;
+–muted2: #999;
+–white: #ffffff;
+–accent: #e8e0d0;
+–gold: #c9a84c;
+–gold2: #f0d080;
+–green: #5a9e6f;
+–red: #c0504a;
+–blue: #4a7fc0;
+–radius: 16px;
+–radius-sm: 10px;
+–font-display: ‘DM Serif Display’, Georgia, serif;
+–font-ui: ‘Syne’, sans-serif;
+–font-mono: ‘DM Mono’, monospace;
+–transition: .35s cubic-bezier(.25,1,.5,1);
+}
 
-        /* ═══════════════════════════════════════════════════════
-           LAYOUT RESPONSIVE
-        ═══════════════════════════════════════════════════════ */
-        .app { display: flex; }
+html { scroll-behavior: smooth; }
 
-        .mobile-header {
-            display: none; position: fixed; top: 0; width: 100%; height: 60px;
-            background: var(--bg2); border-bottom: 1px solid var(--border);
-            z-index: 1000; align-items: center; padding: 0 20px; justify-content: space-between;
-        }
+body {
+background: var(–bg);
+color: var(–text);
+font-family: var(–font-ui);
+font-size: 14px;
+line-height: 1.6;
+min-height: 100vh;
+overflow-x: hidden;
+}
 
-        .sidebar {
-            width: var(--sidebar-width); height: 100vh; background: var(--bg2);
-            border-right: 1px solid var(--border); display: flex; flex-direction: column;
-            position: fixed; top: 0; left: 0; z-index: 100; transition: transform var(--transition);
-        }
+/* ═══════════════════════════════════════════════════════
+LAYOUT
+═══════════════════════════════════════════════════════ */
+.app {
+display: flex;
+min-height: 100vh;
+}
 
-        .sidebar-logo { padding: 30px 20px; border-bottom: 1px solid var(--border); }
-        .logo-title { font-family: var(--font-display); font-size: 22px; color: var(--white); }
+/* SIDEBAR */
+.sidebar {
+width: 220px;
+min-height: 100vh;
+background: var(–bg2);
+border-right: 1px solid var(–border);
+display: flex;
+flex-direction: column;
+position: fixed;
+top: 0; left: 0;
+z-index: 100;
+padding: 0 0 24px;
+}
 
-        .sidebar-nav { padding: 20px 12px; flex: 1; overflow-y: auto; }
-        .nav-section { font-size: 10px; color: var(--muted); text-transform: uppercase; padding: 15px 10px 5px; letter-spacing: 0.1em;}
-        .nav-item {
-            display: flex; align-items: center; gap: 12px; padding: 12px;
-            border-radius: var(--radius-sm); cursor: pointer; color: var(--muted2);
-            transition: var(--transition); margin-bottom: 4px; font-weight: 600;
-        }
-        .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--white); }
-        .nav-item.active { background: rgba(201,168,76,0.1); color: var(--gold2); border: 1px solid rgba(201,168,76,0.2); }
-        .nav-badge { margin-left: auto; background: var(--red); font-size: 10px; padding: 2px 7px; border-radius: 10px; color: white; }
+.sidebar-logo {
+padding: 28px 20px 20px;
+border-bottom: 1px solid var(–border);
+}
 
-        .main { margin-left: var(--sidebar-width); flex: 1; padding: 40px; min-width: 0; }
+.sidebar-logo .logo-title {
+font-family: var(–font-display);
+font-size: 18px;
+color: var(–white);
+letter-spacing: 0.01em;
+}
 
-        /* ═══════════════════════════════════════════════════════
-           GRIDS & CARDS
-        ═══════════════════════════════════════════════════════ */
-        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
-        .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin: 20px 0; }
+.sidebar-logo .logo-sub {
+font-size: 10px;
+color: var(–muted);
+letter-spacing: 0.12em;
+text-transform: uppercase;
+margin-top: 2px;
+}
 
-        .card { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; position: relative; }
-        .card-title { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
-        .card-value { font-family: var(--font-display); font-size: 28px; color: var(--white); }
+.sidebar-nav {
+padding: 16px 12px;
+flex: 1;
+display: flex;
+flex-direction: column;
+gap: 2px;
+}
 
-        .progress-bar { height: 4px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-top: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--gold); width: 0%; transition: width 0.6s ease; }
+.nav-section {
+font-size: 9px;
+color: var(–muted);
+letter-spacing: 0.14em;
+text-transform: uppercase;
+padding: 10px 8px 4px;
+margin-top: 8px;
+}
 
-        /* ═══════════════════════════════════════════════════════
-           PAGES & UI
-        ═══════════════════════════════════════════════════════ */
-        .page { display: none; animation: fadeIn 0.3s ease; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.nav-item {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 9px 12px;
+border-radius: var(–radius-sm);
+cursor: pointer;
+transition: var(–transition);
+color: var(–muted2);
+font-size: 13px;
+font-weight: 600;
+letter-spacing: 0.02em;
+border: 1px solid transparent;
+position: relative;
+}
 
-        .page-header h1 { font-family: var(--font-display); font-size: 36px; margin-bottom: 20px; }
+.nav-item:hover {
+background: rgba(255,255,255,0.04);
+color: var(–white);
+border-color: var(–border);
+}
 
-        .btn {
-            padding: 10px 18px; border-radius: var(--radius-sm); border: none;
-            font-family: var(--font-ui); font-weight: 700; cursor: pointer; font-size: 13px; transition: 0.2s;
-        }
-        .btn-primary { background: var(--gold); color: var(--bg); }
-        .btn-outline { background: transparent; border: 1px solid var(--border-hover); color: var(--text); }
-        .btn:hover { opacity: 0.8; transform: translateY(-1px); }
+.nav-item.active {
+background: rgba(201,168,76,0.1);
+color: var(–gold2);
+border-color: rgba(201,168,76,0.2);
+}
 
-        .task-item {
-            display: flex; align-items: center; gap: 12px; padding: 14px;
-            background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm);
-            margin-bottom: 8px; cursor: pointer;
-        }
-        .task-item.completed { opacity: 0.4; border-color: var(--green); }
-        .task-check { width: 18px; height: 18px; border: 2px solid var(--muted); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; }
-        .task-item.completed .task-check { background: var(--green); border-color: var(--green); color: white; }
+.nav-item .nav-icon {
+font-size: 15px;
+width: 18px;
+text-align: center;
+}
 
-        /* Modal */
-        .text-detail { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; padding: 20px; overflow-y: auto; }
-        .text-detail.open { display: flex; align-items: center; justify-content: center; }
-        .text-detail-inner { background: var(--bg2); padding: 30px; border-radius: 20px; max-width: 700px; width: 100%; border: 1px solid var(--border-hover); }
+.nav-badge {
+margin-left: auto;
+background: var(–red);
+color: white;
+font-size: 9px;
+font-weight: 700;
+padding: 1px 6px;
+border-radius: 999px;
+}
 
-        /* ═══════════════════════════════════════════════════════
-           MEDIA QUERIES
-        ═══════════════════════════════════════════════════════ */
-        @media (max-width: 800px) {
-            .mobile-header { display: flex; }
-            .sidebar { transform: translateX(-100%); width: 260px; }
-            .sidebar.open { transform: translateX(0); }
-            .main { margin-left: 0; padding: 80px 16px 40px; }
-            .grid-4, .grid-2 { grid-template-columns: 1fr; }
-            .week-grid { grid-template-columns: repeat(4, 1fr); }
-        }
+.sidebar-footer {
+padding: 16px 20px 0;
+border-top: 1px solid var(–border);
+}
 
-        /* Classes utilitaires JS */
-        .chapter-body { display: none; padding-top: 15px; border-top: 1px solid var(--border); margin-top: 15px; }
-        .chapter-body.open { display: block; }
-        .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: 800; }
-        .tag-math { background: rgba(74,127,192,0.15); color: #7aaee8; }
-        .tag-fr { background: rgba(192,80,74,0.12); color: #d97070; }
-        .tag-oral { background: rgba(90,158,111,0.15); color: #7fc990; }
-    </style>
+.exam-countdown {
+background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.04));
+border: 1px solid rgba(201,168,76,0.2);
+border-radius: var(–radius-sm);
+padding: 12px 14px;
+text-align: center;
+}
+
+.exam-countdown .days-num {
+font-family: var(–font-display);
+font-size: 32px;
+color: var(–gold2);
+line-height: 1;
+}
+
+.exam-countdown .days-label {
+font-size: 9px;
+color: var(–muted);
+text-transform: uppercase;
+letter-spacing: 0.12em;
+margin-top: 2px;
+}
+
+/* MAIN */
+.main {
+margin-left: 220px;
+flex: 1;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+}
+
+/* PAGE */
+.page {
+display: none;
+padding: 36px 40px;
+max-width: 1100px;
+width: 100%;
+animation: fadeIn .3s ease;
+}
+
+.page.active { display: block; }
+
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(8px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════
+COMMON COMPONENTS
+═══════════════════════════════════════════════════════ */
+.page-header {
+margin-bottom: 32px;
+}
+
+.page-header .eyebrow {
+font-size: 10px;
+color: var(–muted);
+letter-spacing: 0.16em;
+text-transform: uppercase;
+margin-bottom: 6px;
+}
+
+.page-header h1 {
+font-family: var(–font-display);
+font-size: 36px;
+color: var(–white);
+line-height: 1.1;
+}
+
+.page-header .subtitle {
+margin-top: 6px;
+color: var(–muted2);
+font-size: 14px;
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+.card {
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 20px;
+transition: var(–transition);
+position: relative;
+overflow: hidden;
+}
+
+.card:hover {
+border-color: var(–border-hover);
+transform: translateY(-1px);
+}
+
+.card::before {
+content: ‘’;
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 1px;
+background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+pointer-events: none;
+}
+
+.card-title {
+font-size: 11px;
+color: var(–muted);
+letter-spacing: 0.12em;
+text-transform: uppercase;
+margin-bottom: 10px;
+}
+
+.card-value {
+font-family: var(–font-display);
+font-size: 28px;
+color: var(–white);
+line-height: 1;
+}
+
+.card-sub {
+font-size: 12px;
+color: var(–muted);
+margin-top: 4px;
+}
+
+/* PROGRESS BAR */
+.progress-wrap {
+margin-top: 10px;
+}
+
+.progress-label {
+display: flex;
+justify-content: space-between;
+font-size: 11px;
+color: var(–muted);
+margin-bottom: 5px;
+}
+
+.progress-bar {
+height: 4px;
+background: rgba(255,255,255,0.06);
+border-radius: 999px;
+overflow: hidden;
+}
+
+.progress-fill {
+height: 100%;
+background: linear-gradient(90deg, var(–gold), var(–gold2));
+border-radius: 999px;
+transition: width .6s cubic-bezier(.25,1,.5,1);
+}
+
+.progress-fill.green { background: linear-gradient(90deg, #3d8a55, #5a9e6f); }
+.progress-fill.blue  { background: linear-gradient(90deg, #3a6fa8, #5a90d0); }
+
+/* BUTTONS */
+.btn {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+padding: 8px 16px;
+border-radius: var(–radius-sm);
+font-family: var(–font-ui);
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 0.06em;
+cursor: pointer;
+transition: var(–transition);
+border: 1px solid transparent;
+}
+
+.btn-primary {
+background: var(–gold);
+color: var(–bg);
+border-color: var(–gold);
+}
+
+.btn-primary:hover {
+background: var(–gold2);
+border-color: var(–gold2);
+transform: translateY(-1px);
+}
+
+.btn-outline {
+background: transparent;
+color: var(–text);
+border-color: var(–border-hover);
+}
+
+.btn-outline:hover {
+background: rgba(255,255,255,0.05);
+border-color: rgba(255,255,255,0.3);
+}
+
+.btn-ghost {
+background: transparent;
+color: var(–muted2);
+border-color: transparent;
+padding: 6px 10px;
+}
+
+.btn-ghost:hover { color: var(–white); background: rgba(255,255,255,0.05); }
+
+.btn-green {
+background: rgba(90,158,111,0.15);
+color: #7fc990;
+border-color: rgba(90,158,111,0.3);
+}
+
+.btn-green:hover { background: rgba(90,158,111,0.25); }
+
+.btn-red {
+background: rgba(192,80,74,0.12);
+color: #d97070;
+border-color: rgba(192,80,74,0.25);
+}
+
+.btn-red:hover { background: rgba(192,80,74,0.22); }
+
+/* STATUS BADGES */
+.badge {
+display: inline-flex;
+align-items: center;
+gap: 4px;
+padding: 3px 9px;
+border-radius: 999px;
+font-size: 10px;
+font-weight: 700;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+}
+
+.badge-gold   { background: rgba(201,168,76,0.15); color: var(–gold2); border: 1px solid rgba(201,168,76,0.25); }
+.badge-green  { background: rgba(90,158,111,0.15); color: #7fc990; border: 1px solid rgba(90,158,111,0.25); }
+.badge-red    { background: rgba(192,80,74,0.12);  color: #d97070; border: 1px solid rgba(192,80,74,0.22); }
+.badge-muted  { background: rgba(255,255,255,0.05); color: var(–muted2); border: 1px solid var(–border); }
+
+/* SECTION HEADERS */
+.section-title {
+font-family: var(–font-display);
+font-size: 20px;
+color: var(–white);
+margin-bottom: 16px;
+margin-top: 32px;
+}
+
+.section-title:first-child { margin-top: 0; }
+
+/* DIVIDER */
+.divider {
+height: 1px;
+background: var(–border);
+margin: 24px 0;
+}
+
+/* TAG */
+.tag {
+display: inline-block;
+padding: 2px 8px;
+border-radius: 6px;
+font-size: 10px;
+font-weight: 700;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+}
+
+.tag-math  { background: rgba(74,127,192,0.15); color: #7aaee8; border: 1px solid rgba(74,127,192,0.25); }
+.tag-fr    { background: rgba(192,80,74,0.12); color: #d97070; border: 1px solid rgba(192,80,74,0.22); }
+.tag-oral  { background: rgba(90,158,111,0.15); color: #7fc990; border: 1px solid rgba(90,158,111,0.25); }
+
+/* ═══════════════════════════════════════════════════════
+PAGE 1 — DASHBOARD
+═══════════════════════════════════════════════════════ */
+.quote-block {
+background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.03));
+border: 1px solid rgba(201,168,76,0.15);
+border-left: 3px solid var(–gold);
+border-radius: var(–radius);
+padding: 18px 22px;
+margin-bottom: 28px;
+position: relative;
+}
+
+.quote-text {
+font-family: var(–font-display);
+font-style: italic;
+font-size: 16px;
+color: var(–accent);
+line-height: 1.5;
+}
+
+.quote-author {
+font-size: 11px;
+color: var(–muted);
+margin-top: 6px;
+letter-spacing: 0.08em;
+}
+
+.stat-cards {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 14px;
+margin-bottom: 28px;
+}
+
+/* PLANNING */
+.week-grid {
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+gap: 10px;
+margin-bottom: 28px;
+}
+
+.day-card {
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 14px 12px;
+text-align: center;
+cursor: pointer;
+transition: var(–transition);
+}
+
+.day-card:hover, .day-card.active {
+border-color: rgba(201,168,76,0.35);
+background: rgba(201,168,76,0.06);
+}
+
+.day-card.done {
+border-color: rgba(90,158,111,0.3);
+background: rgba(90,158,111,0.05);
+}
+
+.day-card .day-num {
+font-family: var(–font-display);
+font-size: 22px;
+color: var(–white);
+}
+
+.day-card .day-name {
+font-size: 9px;
+color: var(–muted);
+letter-spacing: 0.12em;
+text-transform: uppercase;
+margin-top: 2px;
+}
+
+.day-card .day-tasks {
+font-size: 10px;
+color: var(–gold);
+margin-top: 6px;
+}
+
+/* TASKS */
+.task-list {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.task-item {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 12px 16px;
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: var(–radius-sm);
+cursor: pointer;
+transition: var(–transition);
+}
+
+.task-item:hover {
+border-color: var(–border-hover);
+}
+
+.task-item.completed {
+opacity: 0.5;
+border-color: rgba(90,158,111,0.2);
+background: rgba(90,158,111,0.03);
+}
+
+.task-check {
+width: 18px;
+height: 18px;
+border-radius: 50%;
+border: 2px solid var(–border-hover);
+flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 10px;
+transition: var(–transition);
+}
+
+.task-item.completed .task-check {
+background: var(–green);
+border-color: var(–green);
+color: white;
+}
+
+.task-text {
+flex: 1;
+font-size: 13px;
+color: var(–text);
+}
+
+.task-item.completed .task-text {
+text-decoration: line-through;
+color: var(–muted);
+}
+
+.task-time {
+font-size: 11px;
+color: var(–muted);
+font-family: var(–font-mono);
+}
+
+/* ═══════════════════════════════════════════════════════
+PAGE 2 — MATHS
+═══════════════════════════════════════════════════════ */
+.chapter-list {
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+
+.chapter-card {
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+overflow: hidden;
+transition: var(–transition);
+}
+
+.chapter-header {
+display: flex;
+align-items: center;
+gap: 14px;
+padding: 16px 20px;
+cursor: pointer;
+}
+
+.chapter-header:hover {
+background: rgba(255,255,255,0.02);
+}
+
+.chapter-icon {
+font-size: 18px;
+width: 36px;
+height: 36px;
+display: flex;
+align-items: center;
+justify-content: center;
+background: rgba(74,127,192,0.1);
+border-radius: 10px;
+flex-shrink: 0;
+}
+
+.chapter-info {
+flex: 1;
+}
+
+.chapter-name {
+font-size: 14px;
+font-weight: 700;
+color: var(–white);
+}
+
+.chapter-meta {
+font-size: 11px;
+color: var(–muted);
+margin-top: 2px;
+}
+
+.chapter-progress {
+width: 80px;
+}
+
+.chapter-toggle {
+color: var(–muted);
+font-size: 12px;
+transition: var(–transition);
+}
+
+.chapter-body {
+display: none;
+padding: 0 20px 20px;
+border-top: 1px solid var(–border);
+}
+
+.chapter-body.open { display: block; }
+
+.chapter-sections {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+margin-top: 16px;
+}
+
+.method-block {
+background: rgba(255,255,255,0.02);
+border: 1px solid var(–border);
+border-radius: var(–radius-sm);
+padding: 14px;
+}
+
+.method-title {
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+color: var(–gold);
+margin-bottom: 8px;
+}
+
+.method-content {
+font-size: 12px;
+color: var(–muted2);
+line-height: 1.7;
+}
+
+.method-content ul {
+padding-left: 14px;
+}
+
+.method-content li {
+margin-bottom: 4px;
+}
+
+.trap-block {
+background: rgba(192,80,74,0.05);
+border: 1px solid rgba(192,80,74,0.15);
+border-left: 3px solid var(–red);
+border-radius: var(–radius-sm);
+padding: 12px 14px;
+margin-top: 12px;
+}
+
+.trap-title {
+font-size: 11px;
+font-weight: 700;
+color: #d97070;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+margin-bottom: 6px;
+}
+
+.chapter-actions {
+display: flex;
+gap: 8px;
+margin-top: 14px;
+}
+
+/* EXERCICES */
+.exercise-block {
+background: rgba(255,255,255,0.02);
+border: 1px solid var(–border);
+border-radius: var(–radius-sm);
+padding: 16px;
+margin-top: 12px;
+}
+
+.exercise-q {
+font-size: 13px;
+color: var(–text);
+line-height: 1.7;
+margin-bottom: 12px;
+}
+
+.exercise-choices {
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+
+.choice-btn {
+padding: 9px 14px;
+background: rgba(255,255,255,0.03);
+border: 1px solid var(–border);
+border-radius: var(–radius-sm);
+color: var(–text);
+font-family: var(–font-ui);
+font-size: 13px;
+cursor: pointer;
+transition: var(–transition);
+text-align: left;
+}
+
+.choice-btn:hover { border-color: var(–border-hover); background: rgba(255,255,255,0.05); }
+.choice-btn.correct { border-color: var(–green); background: rgba(90,158,111,0.1); color: #7fc990; }
+.choice-btn.wrong   { border-color: var(–red);   background: rgba(192,80,74,0.1);  color: #d97070; }
+
+.exercise-feedback {
+display: none;
+margin-top: 10px;
+padding: 10px 14px;
+border-radius: var(–radius-sm);
+font-size: 12px;
+line-height: 1.6;
+}
+
+.exercise-feedback.correct {
+display: block;
+background: rgba(90,158,111,0.08);
+border: 1px solid rgba(90,158,111,0.2);
+color: #7fc990;
+}
+
+.exercise-feedback.wrong {
+display: block;
+background: rgba(192,80,74,0.07);
+border: 1px solid rgba(192,80,74,0.18);
+color: #d97070;
+}
+
+/* AUTOMATISMES */
+.auto-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+}
+
+.auto-card {
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: var(–radius-sm);
+padding: 14px 16px;
+cursor: pointer;
+transition: var(–transition);
+}
+
+.auto-card:hover { border-color: var(–border-hover); }
+
+.auto-card.mastered { border-color: rgba(90,158,111,0.3); background: rgba(90,158,111,0.04); }
+.auto-card.review   { border-color: rgba(192,80,74,0.25); background: rgba(192,80,74,0.04); }
+
+.auto-title {
+font-size: 13px;
+color: var(–white);
+font-weight: 600;
+margin-bottom: 4px;
+}
+
+.auto-formula {
+font-family: var(–font-mono);
+font-size: 12px;
+color: var(–gold);
+background: rgba(201,168,76,0.07);
+padding: 4px 8px;
+border-radius: 6px;
+margin: 6px 0;
+display: inline-block;
+}
+
+/* ═══════════════════════════════════════════════════════
+PAGE 3 — FRANÇAIS ÉCRIT
+═══════════════════════════════════════════════════════ */
+.method-steps {
+counter-reset: steps;
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+
+.method-step {
+counter-increment: steps;
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 18px 20px;
+position: relative;
+padding-left: 56px;
+}
+
+.method-step::before {
+content: counter(steps, decimal-leading-zero);
+position: absolute;
+left: 18px;
+top: 18px;
+font-family: var(–font-display);
+font-size: 20px;
+color: rgba(201,168,76,0.4);
+}
+
+.method-step h3 {
+font-size: 14px;
+font-weight: 700;
+color: var(–white);
+margin-bottom: 8px;
+}
+
+.method-step p, .method-step ul {
+font-size: 13px;
+color: var(–muted2);
+line-height: 1.8;
+}
+
+.method-step ul { padding-left: 16px; }
+.method-step li { margin-bottom: 4px; }
+
+/* CHECKLIST */
+.checklist {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.check-item {
+display: flex;
+align-items: flex-start;
+gap: 12px;
+padding: 12px 16px;
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: var(–radius-sm);
+cursor: pointer;
+transition: var(–transition);
+}
+
+.check-item:hover { border-color: var(–border-hover); }
+
+.check-item.checked {
+background: rgba(90,158,111,0.04);
+border-color: rgba(90,158,111,0.25);
+}
+
+.check-box {
+width: 18px;
+height: 18px;
+border-radius: 5px;
+border: 2px solid var(–border-hover);
+flex-shrink: 0;
+margin-top: 1px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 10px;
+transition: var(–transition);
+}
+
+.check-item.checked .check-box {
+background: var(–green);
+border-color: var(–green);
+color: white;
+}
+
+.check-label {
+font-size: 13px;
+color: var(–text);
+flex: 1;
+}
+
+.check-item.checked .check-label {
+text-decoration: line-through;
+color: var(–muted);
+}
+
+/* GENERATEUR */
+.generator-box {
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 24px;
+}
+
+.generator-text {
+font-size: 13px;
+color: var(–text);
+line-height: 1.9;
+border-left: 3px solid var(–gold);
+padding-left: 16px;
+font-style: italic;
+margin-bottom: 20px;
+}
+
+.textarea-block {
+width: 100%;
+background: rgba(255,255,255,0.03);
+border: 1px solid var(–border);
+border-radius: var(–radius-sm);
+padding: 14px;
+color: var(–text);
+font-family: var(–font-ui);
+font-size: 13px;
+line-height: 1.7;
+resize: vertical;
+min-height: 100px;
+transition: var(–transition);
+}
+
+.textarea-block:focus {
+outline: none;
+border-color: rgba(201,168,76,0.4);
+}
+
+/* ═══════════════════════════════════════════════════════
+PAGE 4 — ORAL
+═══════════════════════════════════════════════════════ */
+.texts-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+}
+
+.text-card {
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 16px 18px;
+cursor: pointer;
+transition: var(–transition);
+}
+
+.text-card:hover { border-color: var(–border-hover); transform: translateY(-1px); }
+
+.text-card.mastered { border-color: rgba(90,158,111,0.35); }
+.text-card.review   { border-color: rgba(192,80,74,0.28); }
+.text-card.seen     { border-color: rgba(201,168,76,0.3); }
+
+.text-num {
+font-size: 10px;
+color: var(–muted);
+font-family: var(–font-mono);
+margin-bottom: 4px;
+}
+
+.text-title {
+font-size: 13px;
+font-weight: 700;
+color: var(–white);
+line-height: 1.3;
+margin-bottom: 3px;
+}
+
+.text-author {
+font-size: 11px;
+color: var(–muted2);
+font-style: italic;
+}
+
+.text-status {
+margin-top: 10px;
+display: flex;
+gap: 6px;
+}
+
+/* DETAIL TEXT */
+.text-detail {
+display: none;
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.85);
+z-index: 200;
+backdrop-filter: blur(8px);
+overflow-y: auto;
+padding: 40px;
+animation: fadeIn .2s ease;
+}
+
+.text-detail.open { display: flex; justify-content: center; }
+
+.text-detail-inner {
+background: var(–bg2);
+border: 1px solid var(–border-hover);
+border-radius: 20px;
+padding: 36px;
+max-width: 800px;
+width: 100%;
+height: fit-content;
+}
+
+.detail-close {
+position: absolute;
+top: 48px;
+right: 40px;
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: 50%;
+width: 36px;
+height: 36px;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+font-size: 16px;
+color: var(–muted2);
+transition: var(–transition);
+z-index: 201;
+}
+
+.detail-close:hover { color: var(–white); border-color: var(–border-hover); }
+
+.cpi-grid {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+gap: 10px;
+margin-top: 16px;
+}
+
+.cpi-card {
+background: rgba(255,255,255,0.02);
+border: 1px solid var(–border);
+border-radius: var(–radius-sm);
+padding: 12px;
+}
+
+.cpi-label {
+font-size: 9px;
+color: var(–muted);
+letter-spacing: 0.12em;
+text-transform: uppercase;
+margin-bottom: 8px;
+}
+
+.cpi-content {
+font-size: 12px;
+color: var(–text);
+line-height: 1.7;
+}
+
+/* ═══════════════════════════════════════════════════════
+PAGE 5 — SUIVI
+═══════════════════════════════════════════════════════ */
+.time-tracker {
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+gap: 8px;
+margin-bottom: 24px;
+}
+
+.time-day {
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: var(–radius-sm);
+padding: 12px 8px;
+text-align: center;
+}
+
+.time-day .td-name {
+font-size: 9px;
+color: var(–muted);
+letter-spacing: 0.1em;
+text-transform: uppercase;
+}
+
+.time-day .td-hours {
+font-family: var(–font-display);
+font-size: 18px;
+color: var(–white);
+margin: 4px 0;
+}
+
+.time-day .td-bar {
+height: 3px;
+background: rgba(255,255,255,0.05);
+border-radius: 999px;
+overflow: hidden;
+margin-top: 4px;
+}
+
+.time-day .td-fill {
+height: 100%;
+background: var(–gold);
+border-radius: 999px;
+}
+
+.score-display {
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;
+padding: 32px;
+background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.03));
+border: 1px solid rgba(201,168,76,0.2);
+border-radius: var(–radius);
+}
+
+.score-num {
+font-family: var(–font-display);
+font-size: 72px;
+line-height: 1;
+background: linear-gradient(135deg, var(–gold), var(–gold2));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+
+.score-label {
+font-size: 11px;
+color: var(–muted);
+letter-spacing: 0.12em;
+text-transform: uppercase;
+margin-top: 6px;
+}
+
+.weak-points {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.weak-item {
+display: flex;
+align-items: center;
+gap: 14px;
+padding: 12px 16px;
+background: var(–bg3);
+border: 1px solid rgba(192,80,74,0.18);
+border-radius: var(–radius-sm);
+cursor: pointer;
+transition: var(–transition);
+}
+
+.weak-item:hover { border-color: rgba(192,80,74,0.35); }
+
+.weak-dot {
+width: 8px;
+height: 8px;
+border-radius: 50%;
+background: var(–red);
+flex-shrink: 0;
+}
+
+.weak-name { flex: 1; font-size: 13px; color: var(–text); }
+
+.weak-score {
+font-family: var(–font-mono);
+font-size: 12px;
+color: #d97070;
+}
+
+/* ═══════════════════════════════════════════════════════
+TIMER / MODE BAC
+═══════════════════════════════════════════════════════ */
+.timer-display {
+text-align: center;
+padding: 28px;
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+margin-bottom: 20px;
+}
+
+.timer-clock {
+font-family: var(–font-mono);
+font-size: 52px;
+color: var(–white);
+letter-spacing: 0.04em;
+}
+
+.timer-label {
+font-size: 11px;
+color: var(–muted);
+letter-spacing: 0.12em;
+text-transform: uppercase;
+margin-top: 6px;
+}
+
+.timer-controls {
+display: flex;
+gap: 10px;
+justify-content: center;
+margin-top: 16px;
+}
+
+/* ═══════════════════════════════════════════════════════
+RESPONSIVE
+═══════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+.sidebar {
+width: 100%;
+height: auto;
+min-height: unset;
+position: relative;
+flex-direction: row;
+flex-wrap: wrap;
+}
+.main { margin-left: 0; }
+.page { padding: 20px 16px; }
+.stat-cards, .grid-4 { grid-template-columns: 1fr 1fr; }
+.grid-3, .chapter-sections { grid-template-columns: 1fr; }
+.week-grid { grid-template-columns: repeat(4, 1fr); }
+.texts-grid, .auto-grid, .cpi-grid { grid-template-columns: 1fr; }
+.time-tracker { grid-template-columns: repeat(4, 1fr); }
+.sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+.sidebar-logo { width: 100%; }
+}
+</style>
+
 </head>
 <body>
+<div class="app">
 
-    <div class="mobile-header">
-        <div class="logo-title">QG BAC</div>
-        <button class="btn btn-outline" onclick="toggleMenu()">Menu</button>
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-title">QG Bac</div>
+    <div class="logo-sub">Système performance</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">Navigation</div>
+    <div class="nav-item active" onclick="showPage('dashboard')">
+      <span class="nav-icon">⊞</span> Dashboard
     </div>
 
-    <div class="app">
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-logo">
-                <div class="logo-title">QG BAC</div>
-            </div>
-            <nav class="sidebar-nav">
-                <div class="nav-section">Navigation</div>
-                <div class="nav-item active" onclick="showPage('dashboard')">⊞ Dashboard</div>
-                <div class="nav-section">Matières</div>
-                <div class="nav-item" onclick="showPage('maths')">∑ Mathématiques</div>
-                <div class="nav-item" onclick="showPage('francais')">✦ Français Écrit</div>
-                <div class="nav-item" onclick="showPage('oral')">◈ Oral Français</div>
-                <div class="nav-section">Performance</div>
-                <div class="nav-item" onclick="showPage('suivi')">◎ Statistiques</div>
-                <div class="nav-item" onclick="showPage('revision')">⚑ À réviser <span class="nav-badge" id="revisionBadge">0</span></div>
-            </nav>
-        </aside>
+```
+<div class="nav-section">Matières</div>
+<div class="nav-item" onclick="showPage('maths')">
+  <span class="nav-icon">∑</span> Mathématiques
+</div>
+<div class="nav-item" onclick="showPage('francais')">
+  <span class="nav-icon">✦</span> Français Écrit
+</div>
+<div class="nav-item" onclick="showPage('oral')">
+  <span class="nav-icon">◈</span> Oral Français
+</div>
 
-        <main class="main">
-            <div class="page active" id="page-dashboard">
-                <div class="page-header"><h1>Tableau de bord</h1></div>
-                <div class="grid-4">
-                    <div class="card"><div class="card-title">Progression</div><div class="card-value" id="globalPct">0%</div><div class="progress-bar"><div class="progress-fill" id="globalBar"></div></div></div>
-                    <div class="card"><div class="card-title">Tâches Finies</div><div class="card-value" id="tasksDone">0/0</div></div>
-                    <div class="card"><div class="card-title">Temps total</div><div class="card-value" id="totalTime">0h</div></div>
-                    <div class="card"><div class="card-title">Score Estimé</div><div class="card-value" id="estimScore">--</div></div>
-                </div>
-                <h3>Planning de la semaine</h3>
-                <div class="week-grid" id="weekGrid"></div>
-                <h3>Tâches du jour</h3>
-                <div id="todayTasks" class="task-list"></div>
-            </div>
+<div class="nav-section">Outils</div>
+<div class="nav-item" onclick="showPage('suivi')">
+  <span class="nav-icon">◎</span> Suivi & Stats
+</div>
+<div class="nav-item" onclick="showPage('revision')">
+  <span class="nav-icon">⚑</span> À réviser
+  <span class="nav-badge" id="revisionBadge">0</span>
+</div>
+```
 
-            <div class="page" id="page-maths">
-                <div class="page-header"><h1>Mathématiques</h1></div>
-                <div style="display:flex; gap:10px; margin-bottom:20px;">
-                    <button class="btn btn-primary" onclick="showMathTab('chapitres')">Chapitres</button>
-                    <button class="btn btn-outline" onclick="showMathTab('automatismes')">Automatismes</button>
-                    <button class="btn btn-outline" onclick="showMathTab('modebac')">Mode Bac</button>
-                </div>
-                <div id="math-chapitres"><div id="chapterList"></div></div>
-                <div id="math-automatismes" style="display:none"><div class="grid-2" id="autosGrid"></div></div>
-                <div id="math-modebac" style="display:none">
-                    <div class="card" style="text-align:center">
-                        <div id="timerDisplay" style="font-size:48px; font-family:var(--font-mono);">03:00:00</div>
-                        <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
-                            <button class="btn btn-primary" onclick="startTimer()">Start</button>
-                            <button class="btn btn-outline" onclick="pauseTimer()">Pause</button>
-                            <button class="btn btn-outline" onclick="resetTimer()">Reset</button>
-                        </div>
-                    </div>
-                    <div id="bacSubject" style="margin-top:20px"></div>
-                </div>
-            </div>
+  </nav>
 
-            <div class="page" id="page-francais">
-                <div class="page-header"><h1>Français Écrit</h1></div>
-                <div style="display:flex; gap:10px; margin-bottom:20px;">
-                    <button class="btn btn-primary" onclick="showFrTab('methode')">Méthode</button>
-                    <button class="btn btn-outline" onclick="showFrTab('entrainement')">Entraînement</button>
-                </div>
-                <div id="fr-methode"><div class="task-list" id="frMethodSteps"></div></div>
-                <div id="fr-entrainement" style="display:none">
-                    <button class="btn btn-primary" onclick="generateText()">Générer un texte</button>
-                    <div id="generatorText" class="card" style="margin:20px 0; font-style:italic"></div>
-                    <textarea id="introText" style="width:100%; height:200px; background:var(--bg3); color:white; border:1px solid var(--border); border-radius:10px; padding:15px;"></textarea>
-                </div>
-            </div>
-
-            <div class="page" id="page-oral">
-                <div class="page-header"><h1>Oral de Français</h1></div>
-                <div class="grid-2" id="textsGrid"></div>
-            </div>
-
-            <div class="page" id="page-suivi">
-                <div class="page-header"><h1>Suivi & Stats</h1></div>
-                <div class="grid-2">
-                    <div class="card" id="timeTracker"></div>
-                    <div class="card" id="subjectProgress"></div>
-                </div>
-                <h3 style="margin-top:20px">Points faibles</h3>
-                <div id="weakPoints" class="task-list"></div>
-            </div>
-
-            <div class="page" id="page-revision">
-                <div class="page-header"><h1>À réviser</h1></div>
-                <div id="revisionList" class="task-list"></div>
-            </div>
-        </main>
+  <div class="sidebar-footer">
+    <div class="exam-countdown">
+      <div class="days-num" id="countdownDays">7</div>
+      <div class="days-label">jours avant le bac</div>
     </div>
+  </div>
+</aside>
 
-    <div class="text-detail" id="textDetail" onclick="closeTextDetail()">
-        <div class="text-detail-inner" id="textDetailInner" onclick="event.stopPropagation()"></div>
+<!-- ═══════════════ MAIN ═══════════════ -->
+
+<main class="main">
+
+<!-- ══════════════════════════════════════
+     PAGE : DASHBOARD
+══════════════════════════════════════ -->
+
+<div class="page active" id="page-dashboard">
+  <div class="page-header">
+    <div class="eyebrow">Première — BAC 2025</div>
+    <h1>Tableau de bord</h1>
+    <div class="subtitle">Ton QG de révision intensif — 7 jours pour atteindre l'excellence</div>
+  </div>
+
+  <!-- Citation du jour -->
+
+  <div class="quote-block">
+    <div class="quote-text" id="dailyQuote">"La discipline est le pont entre les objectifs et l'accomplissement."</div>
+    <div class="quote-author">— Jim Rohn · Citation du jour</div>
+  </div>
+
+  <!-- Stats globales -->
+
+  <div class="stat-cards">
+    <div class="card">
+      <div class="card-title">Progression globale</div>
+      <div class="card-value" id="globalPct">0%</div>
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="globalBar" style="width:0%"></div></div>
+      </div>
     </div>
+    <div class="card">
+      <div class="card-title">Tâches complétées</div>
+      <div class="card-value" id="tasksDone">0/0</div>
+      <div class="card-sub">Aujourd'hui</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Temps de travail</div>
+      <div class="card-value" id="totalTime">0h</div>
+      <div class="card-sub">Cette semaine</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Score estimé</div>
+      <div class="card-value" id="estimScore">—</div>
+      <div class="card-sub">Basé sur progression</div>
+    </div>
+  </div>
 
-    <script>
-        /* ═══════════════════════════════════════════════════════
-           STATE & DATA
-        ═══════════════════════════════════════════════════════ */
-        let state = JSON.parse(localStorage.getItem('qgbac_v1') || 'null') || {
-            tasks: {}, chapters: {}, automatismes: {}, texts: {}, workTime: [0,0,0,0,0,0,0]
-        };
+  <!-- Planning semaine -->
 
-        function save() { localStorage.setItem('qgbac_v1', JSON.stringify(state)); updateAllProgress(); }
+  <div class="section-title">Planning de la semaine</div>
+  <div class="week-grid" id="weekGrid"></div>
 
-        const CHAPTERS = [
-            { id: 'suites', name: 'Suites Arith/Géo', summary: ' u_{n+1}=u_n+r ou u_n \times q.', traps: 'Confondre r et q, premier rang n=0 ou n=1.' },
-            { id: 'derivees', name: 'Dérivées', summary: 'Étude de f\'(x) pour trouver les variations de f.', traps: 'Signe de la dérivée ≠ signe de la fonction.' },
-            { id: 'proba', name: 'Probabilités', summary: 'Conditionnelles et Loi Binomiale B(n,p).', traps: 'Confondre P(A|B) et P(B|A).' }
-        ];
+  <!-- Progression par matière -->
 
-        const TEXTS = [
-            { id: 't1', title: 'Candide - Incipit', author: 'Voltaire', resume: 'Critique de l\'optimisme et de la noblesse.' },
-            { id: 't2', title: 'Les Fleurs du Mal - Spleen', author: 'Baudelaire', resume: 'Enfermement et angoisse existentielle.' }
-        ];
+  <div class="grid-2" style="margin-bottom:28px">
+    <div class="card">
+      <div class="card-title">Mathématiques</div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>Chapitres maîtrisés</span><span id="mathPct">0%</span></div>
+        <div class="progress-bar"><div class="progress-fill blue" id="mathBar" style="width:0%"></div></div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Automatismes</span><span id="autoPct">0%</span></div>
+          <div class="progress-bar"><div class="progress-fill" id="autoBar" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Français</div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>Commentaire</span><span id="frPct">0%</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="frBar" style="width:0%"></div></div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Textes oral</span><span id="oralPct">0%</span></div>
+          <div class="progress-bar"><div class="progress-fill green" id="oralBar" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        const WEEK_PLAN = [
-            { day: 'Lun', tasks: ['Suites révision', 'Méthode Intro Français'] },
-            { day: 'Mar', tasks: ['Calcul Dérivées', 'Textes Oral 1-2'] },
-            { day: 'Mer', tasks: ['Proba Loi Binomiale', 'Entraînement Écrit'] },
-            { day: 'Jeu', tasks: ['Mode Bac Maths', 'Textes Oral 3-4'] },
-            { day: 'Ven', tasks: ['Synthèse Maths', 'Révision Oral'] },
-            { day: 'Sam', tasks: ['Sujet Blanc', 'Fiches Français'] },
-            { day: 'Dim', tasks: ['Repos / Reprise points faibles'] }
-        ];
+  <!-- Tâches du jour -->
 
-        /* ═══════════════════════════════════════════════════════
-           LOGIQUE UI
-        ═══════════════════════════════════════════════════════ */
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
+  <div class="section-title">Tâches du jour</div>
+  <div class="task-list" id="todayTasks"></div>
+</div>
 
-        function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + id).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            if(window.innerWidth < 800) toggleMenu();
-        }
+<!-- ══════════════════════════════════════
+     PAGE : MATHS
+══════════════════════════════════════ -->
 
-        function renderWeek() {
-            const grid = document.getElementById('weekGrid');
-            grid.innerHTML = '';
-            WEEK_PLAN.forEach((d, i) => {
-                const done = state.tasks[i] ? Object.values(state.tasks[i]).filter(Boolean).length : 0;
-                grid.innerHTML += `<div class="card" onclick="renderTasks(${i})" style="text-align:center; cursor:pointer">
-                    <div style="font-size:10px">${d.day}</div>
-                    <div style="font-weight:800">${done}/${d.tasks.length}</div>
-                </div>`;
-            });
-        }
+<div class="page" id="page-maths">
+  <div class="page-header">
+    <div class="eyebrow">Spécialité · Première</div>
+    <h1>Mathématiques</h1>
+    <div class="subtitle">Programme complet avec méthodes, pièges et exercices type bac</div>
+  </div>
 
-        function renderTasks(dayIdx) {
-            const container = document.getElementById('todayTasks');
-            container.innerHTML = '';
-            WEEK_PLAN[dayIdx].tasks.forEach((t, i) => {
-                const checked = state.tasks[dayIdx]?.[i];
-                const div = document.createElement('div');
-                div.className = `task-item ${checked ? 'completed' : ''}`;
-                div.innerHTML = `<div class="task-check">${checked ? '✓' : ''}</div><div>${t}</div>`;
-                div.onclick = () => {
-                    if(!state.tasks[dayIdx]) state.tasks[dayIdx] = {};
-                    state.tasks[dayIdx][i] = !state.tasks[dayIdx][i];
-                    save(); renderTasks(dayIdx); renderWeek();
-                };
-                container.appendChild(div);
-            });
-        }
+  <!-- Tabs -->
 
-        function renderChapters() {
-            const list = document.getElementById('chapterList');
-            list.innerHTML = '';
-            CHAPTERS.forEach(ch => {
-                const status = state.chapters[ch.id] || 'none';
-                list.innerHTML += `<div class="card" style="margin-bottom:10px">
-                    <div style="display:flex; justify-content:space-between">
-                        <div style="font-weight:700">${ch.name}</div>
-                        <div class="tag ${status === 'mastered' ? 'tag-oral' : 'tag-fr'}">${status}</div>
-                    </div>
-                    <div style="font-size:12px; margin-top:10px">${ch.summary}</div>
-                    <div style="margin-top:10px; display:flex; gap:5px">
-                        <button class="btn btn-outline" onclick="setChapter('${ch.id}','mastered')">Maîtrisé</button>
-                        <button class="btn btn-outline" onclick="setChapter('${ch.id}','review')">À revoir</button>
-                    </div>
-                </div>`;
-            });
-        }
+  <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="showMathTab('chapitres')">Chapitres</button>
+    <button class="btn btn-outline" onclick="showMathTab('automatismes')">Automatismes</button>
+    <button class="btn btn-outline" onclick="showMathTab('modebac')">Mode Bac ⏱</button>
+  </div>
 
-        function setChapter(id, status) { state.chapters[id] = status; save(); renderChapters(); }
+  <!-- TAB CHAPITRES -->
 
-        function renderTexts() {
-            const grid = document.getElementById('textsGrid');
-            grid.innerHTML = '';
-            TEXTS.forEach(t => {
-                const status = state.texts[t.id] || 'none';
-                grid.innerHTML += `<div class="card" onclick="openText('${t.id}')" style="cursor:pointer">
-                    <div class="tag tag-oral">${t.author}</div>
-                    <div style="font-weight:800; margin:5px 0">${t.title}</div>
-                    <div class="tag">${status}</div>
-                </div>`;
-            });
-        }
+  <div id="math-chapitres">
+    <div class="chapter-list" id="chapterList"></div>
+  </div>
 
-        function openText(id) {
-            const t = TEXTS.find(x => x.id === id);
-            const inner = document.getElementById('textDetailInner');
-            inner.innerHTML = `<h2>${t.title}</h2><p>${t.resume}</p>
-                <div style="margin-top:20px; display:flex; gap:10px">
-                    <button class="btn btn-primary" onclick="setTextStatus('${t.id}','mastered')">Maîtrisé</button>
-                    <button class="btn btn-outline" onclick="setTextStatus('${t.id}','review')">À revoir</button>
-                </div>`;
-            document.getElementById('textDetail').classList.add('open');
-        }
+  <!-- TAB AUTOMATISMES -->
 
-        function setTextStatus(id, s) { state.texts[id] = s; save(); renderTexts(); closeTextDetail(); }
-        function closeTextDetail() { document.getElementById('textDetail').classList.remove('open'); }
+  <div id="math-automatismes" style="display:none">
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">Automatismes officiels — Programme de première</div>
+      <p style="font-size:13px;color:var(--muted2);margin-bottom:8px">Ces compétences doivent être mobilisées sans réflexion lors de l'épreuve. Clique pour marquer ton niveau.</p>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>Automatismes maîtrisés</span><span id="autoProgPct">0%</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="autoProgBar" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="auto-grid" id="autosGrid"></div>
+  </div>
 
-        function updateAllProgress() {
-            const tMastered = Object.values(state.texts).filter(v => v === 'mastered').length;
-            const cMastered = Object.values(state.chapters).filter(v => v === 'mastered').length;
-            const total = TEXTS.length + CHAPTERS.length;
-            const pct = Math.round(((tMastered + cMastered) / total) * 100) || 0;
-            document.getElementById('globalPct').textContent = pct + '%';
-            document.getElementById('globalBar').style.width = pct + '%';
-            document.getElementById('revisionBadge').textContent = 
-                Object.values(state.chapters).filter(v => v === 'review').length + 
-                Object.values(state.texts).filter(v => v === 'review').length;
-        }
+  <!-- TAB MODE BAC -->
 
-        /* TIMER MATHS */
-        let timer;
-        let timeLeft = 3 * 3600;
-        function startTimer() { timer = setInterval(() => { if(timeLeft > 0) { timeLeft--; updateTimer(); } }, 1000); }
-        function pauseTimer() { clearInterval(timer); }
-        function resetTimer() { pauseTimer(); timeLeft = 3 * 3600; updateTimer(); }
-        function updateTimer() {
-            const h = Math.floor(timeLeft/3600);
-            const m = Math.floor((timeLeft%3600)/60);
-            const s = timeLeft%60;
-            document.getElementById('timerDisplay').textContent = `${h}:${m}:${s}`;
-        }
+  <div id="math-modebac" style="display:none">
+    <div class="grid-2">
+      <div>
+        <div class="timer-display">
+          <div class="timer-clock" id="timerDisplay">03:00:00</div>
+          <div class="timer-label">Durée épreuve bac (3h)</div>
+          <div class="timer-controls">
+            <button class="btn btn-primary" onclick="startTimer()">▶ Démarrer</button>
+            <button class="btn btn-outline" onclick="pauseTimer()">⏸ Pause</button>
+            <button class="btn btn-ghost" onclick="resetTimer()">↺ Reset</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Conseils bac</div>
+          <ul style="font-size:12px;color:var(--muted2);line-height:2;padding-left:16px">
+            <li>Lire tout le sujet en 10 min avant de commencer</li>
+            <li>Commencer par ce que tu maîtrises le mieux</li>
+            <li>Laisser 20 min pour relire et vérifier</li>
+            <li>Montrer ta démarche même si le résultat est faux</li>
+            <li>Encadrer tes réponses finales</li>
+            <li>Ne pas rester bloqué — passer et revenir</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="section-title" style="margin-top:0">Sujet type bac</div>
+        <div id="bacSubject" class="chapter-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-        /* INITIALISATION */
-        renderWeek();
-        renderTasks(0);
-        renderChapters();
-        renderTexts();
-        updateAllProgress();
-        
-        function showMathTab(id) {
-            ['chapitres','automatismes','modebac'].forEach(t => document.getElementById('math-'+t).style.display = t === id ? 'block' : 'none');
-        }
-        function showFrTab(id) {
-            ['methode','entrainement'].forEach(t => document.getElementById('fr-'+t).style.display = t === id ? 'block' : 'none');
-        }
-        function generateText() { document.getElementById('generatorText').textContent = "Texte généré : 'L'homme est né libre, et partout il est dans les fers.' - Rousseau"; }
-    </script>
+<!-- ══════════════════════════════════════
+     PAGE : FRANÇAIS ÉCRIT
+══════════════════════════════════════ -->
+
+<div class="page" id="page-francais">
+  <div class="page-header">
+    <div class="eyebrow">Épreuve anticipée</div>
+    <h1>Français Écrit</h1>
+    <div class="subtitle">Maîtrise du commentaire composé — Méthode + entraînement</div>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="showFrTab('methode')">Méthode</button>
+    <button class="btn btn-outline" onclick="showFrTab('entrainement')">Entraînement</button>
+    <button class="btn btn-outline" onclick="showFrTab('checklist')">Checklist</button>
+  </div>
+
+  <!-- TAB MÉTHODE -->
+
+  <div id="fr-methode">
+    <div class="section-title" style="margin-top:0">Les 4 étapes du commentaire parfait</div>
+    <div class="method-steps" id="frMethodSteps"></div>
+
+```
+<div class="divider"></div>
+
+<div class="section-title">Formules magiques à mémoriser</div>
+<div class="auto-grid" id="frFormulas"></div>
+```
+
+  </div>
+
+  <!-- TAB ENTRAINEMENT -->
+
+  <div id="fr-entrainement" style="display:none">
+    <div class="generator-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div>
+          <div class="section-title" style="margin:0 0 4px">Générateur d'entraînement</div>
+          <div style="font-size:12px;color:var(--muted)">Texte aléatoire pour t'entraîner à l'intro et au plan</div>
+        </div>
+        <button class="btn btn-primary" onclick="generateText()">↻ Nouveau texte</button>
+      </div>
+      <div class="generator-text" id="generatorText">Clique sur "Nouveau texte" pour générer un extrait d'entraînement.</div>
+      <div class="divider"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:11px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Ton introduction</div>
+          <textarea class="textarea-block" rows="5" id="introText" placeholder="Rédige ton introduction complète (amorce, présentation, problématique, annonce du plan)…"></textarea>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Ton plan détaillé</div>
+          <textarea class="textarea-block" rows="5" id="planText" placeholder="I. Axe 1 (idée + procédés + interprétation)&#10;II. Axe 2 (idée + procédés + interprétation)&#10;III. Conclusion"></textarea>
+        </div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="saveFrTrain()">💾 Sauvegarder</button>
+        <button class="btn btn-outline" onclick="clearFrTrain()">✕ Effacer</button>
+      </div>
+    </div>
+    <div id="savedTrains" style="margin-top:20px"></div>
+  </div>
+
+  <!-- TAB CHECKLIST -->
+
+  <div id="fr-checklist" style="display:none">
+    <div class="grid-2">
+      <div>
+        <div class="section-title" style="margin-top:0">Checklist introduction</div>
+        <div class="checklist" id="introChecklist"></div>
+      </div>
+      <div>
+        <div class="section-title" style="margin-top:0">Checklist développement</div>
+        <div class="checklist" id="devChecklist"></div>
+      </div>
+    </div>
+    <div style="margin-top:20px">
+      <div class="section-title">Checklist conclusion</div>
+      <div class="checklist" id="concluChecklist"></div>
+    </div>
+    <div style="margin-top:16px;padding:14px 16px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:var(--radius-sm)">
+      <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Score de révision</div>
+      <div id="checklistScore" style="font-family:var(--font-display);font-size:24px;color:var(--white)">0 / 0</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE : ORAL
+══════════════════════════════════════ -->
+
+<div class="page" id="page-oral">
+  <div class="page-header">
+    <div class="eyebrow">Épreuve anticipée</div>
+    <h1>Oral de Français</h1>
+    <div class="subtitle">16 textes · Explication linéaire · Entraînement examinateur</div>
+  </div>
+
+  <!-- Progression -->
+
+  <div class="card" style="margin-bottom:24px">
+    <div style="display:flex;gap:24px;align-items:center">
+      <div style="text-align:center">
+        <div style="font-family:var(--font-display);font-size:32px;color:var(--white)" id="textsMastered">0</div>
+        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Maîtrisés</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:var(--font-display);font-size:32px;color:var(--gold2)" id="textsSeen">0</div>
+        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Vus</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:var(--font-display);font-size:32px;color:#d97070" id="textsReview">0</div>
+        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">À retravailler</div>
+      </div>
+      <div style="flex:1">
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Progression globale oral</span><span id="oralProgPct">0%</span></div>
+          <div class="progress-bar"><div class="progress-fill green" id="oralProgBar" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="filterTexts('all')">Tous (16)</button>
+    <button class="btn btn-outline" onclick="filterTexts('mastered')">✓ Maîtrisés</button>
+    <button class="btn btn-outline" onclick="filterTexts('seen')">◉ Vus</button>
+    <button class="btn btn-outline" onclick="filterTexts('review')">⚑ À retravailler</button>
+    <button class="btn btn-outline" onclick="filterTexts('none')">○ Non commencés</button>
+  </div>
+
+  <div class="texts-grid" id="textsGrid"></div>
+
+  <!-- Modal détail texte -->
+
+  <div class="text-detail" id="textDetail">
+    <div class="text-detail-inner" id="textDetailInner">
+      <button class="detail-close" onclick="closeTextDetail()">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE : SUIVI
+══════════════════════════════════════ -->
+
+<div class="page" id="page-suivi">
+  <div class="page-header">
+    <div class="eyebrow">Performance</div>
+    <h1>Suivi & Statistiques</h1>
+    <div class="subtitle">Analyse de ta progression et points à renforcer</div>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:24px">
+    <div class="score-display">
+      <div class="score-num" id="mathScore">—</div>
+      <div class="score-label">Score Maths estimé</div>
+    </div>
+    <div class="score-display">
+      <div class="score-num" id="frScore">—</div>
+      <div class="score-label">Score Français estimé</div>
+    </div>
+    <div class="score-display">
+      <div class="score-num" id="oralScore">—</div>
+      <div class="score-label">Score Oral estimé</div>
+    </div>
+  </div>
+
+  <div class="section-title">Temps de travail par jour</div>
+  <div class="time-tracker" id="timeTracker"></div>
+
+  <div class="divider"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="section-title" style="margin-top:0">Progression par matière</div>
+      <div id="subjectProgress" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+    <div>
+      <div class="section-title" style="margin-top:0">Points faibles à retravailler</div>
+      <div class="weak-points" id="weakPoints"></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-title">Ajouter du temps de travail</div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <select id="workDaySelect" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;color:var(--text);font-family:var(--font-ui);font-size:13px">
+      <option value="0">Jour 1</option>
+      <option value="1">Jour 2</option>
+      <option value="2">Jour 3</option>
+      <option value="3">Jour 4</option>
+      <option value="4">Jour 5</option>
+      <option value="5">Jour 6</option>
+      <option value="6">Jour 7</option>
+    </select>
+    <input type="number" id="workHoursInput" min="0" max="16" step="0.5" value="2" style="width:80px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;color:var(--text);font-family:var(--font-ui);font-size:13px">
+    <span style="font-size:13px;color:var(--muted2)">heures</span>
+    <button class="btn btn-primary" onclick="addWorkTime()">+ Ajouter</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE : À RÉVISER
+══════════════════════════════════════ -->
+
+<div class="page" id="page-revision">
+  <div class="page-header">
+    <div class="eyebrow">Priorité</div>
+    <h1>À réviser en urgence</h1>
+    <div class="subtitle">Éléments marqués "à revoir" depuis plus de 2 jours</div>
+  </div>
+  <div id="revisionList"></div>
+</div>
+
+</main>
+</div>
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT — DONNÉES & LOGIQUE
+══════════════════════════════════════ -->
+
+<script>
+/* ────────────────────────────────────────
+   STATE & STORAGE
+──────────────────────────────────────── */
+let state = JSON.parse(localStorage.getItem('qgbac') || 'null') || {
+  tasks: {},
+  chapters: {},
+  automatismes: {},
+  texts: {},
+  checklists: {},
+  workTime: [0,0,0,0,0,0,0],
+  trainingSessions: [],
+  startDate: new Date().toISOString()
+};
+
+function save() {
+  localStorage.setItem('qgbac', JSON.stringify(state));
+  updateAllProgress();
+}
+
+/* ────────────────────────────────────────
+   DATA — MATHS
+──────────────────────────────────────── */
+const CHAPTERS = [
+  {
+    id: 'suites_arith',
+    name: 'Suites arithmétiques',
+    icon: '∿',
+    tag: 'Suites',
+    summary: 'Une suite arithmétique est définie par u_{n+1} = u_n + r, où r est la raison.',
+    methods: [
+      { title: 'Identifier une suite arithmétique', items: ['Calculer u_{n+1} - u_n pour plusieurs termes', 'Si la différence est constante → suite arithmétique', 'La raison r = u_{n+1} - u_n'] },
+      { title: 'Terme général', items: ['u_n = u_0 + n·r (à partir du rang 0)', 'u_n = u_p + (n-p)·r (formule générale)', 'Ne pas confondre rang et valeur'] }
+    ],
+    formulas: ['u_n = u_0 + n·r', 'S_n = n · (u_0 + u_{n-1}) / 2', 'S_n = n · u_{(n-1)/2} (terme médian)'],
+    traps: ['Confondre la raison avec le premier terme', 'Erreur de rang (commence à 0 ou à 1 ?)', 'Signe de la raison (peut être négatif)'],
+    exercises: [
+      { q: 'La suite (u_n) est arithmétique de raison 3 et u_0 = 5. Quelle est la valeur de u_10 ?', choices: ['35', '38', '32', '30'], correct: 0, expl: 'u_10 = u_0 + 10×r = 5 + 10×3 = 5 + 30 = 35 ✓' },
+      { q: 'La somme des 10 premiers termes d\'une suite arithmétique est 145, et u_0 = 1. Quelle est la raison r ?', choices: ['r = 3', 'r = 2', 'r = 4', 'r = 5'], correct: 0, expl: 'S_10 = 10(u_0+u_9)/2 = 145 → u_0+u_9 = 29 → u_9 = 28 → 28 = 1 + 9r → r = 3 ✓' }
+    ]
+  },
+  {
+    id: 'suites_geo',
+    name: 'Suites géométriques',
+    icon: '⟳',
+    tag: 'Suites',
+    summary: 'Une suite géométrique est définie par u_{n+1} = q·u_n, où q est la raison.',
+    methods: [
+      { title: 'Identifier une suite géométrique', items: ['Calculer le rapport u_{n+1}/u_n pour plusieurs termes', 'Si le rapport est constant → suite géométrique', 'La raison q = u_{n+1}/u_n'] },
+      { title: 'Terme général', items: ['u_n = u_0 × q^n', 'Vérifier que u_0 ≠ 0 et q ≠ 0', 'Attention au sens de variation selon |q|'] }
+    ],
+    formulas: ['u_n = u_0 × q^n', 'S_n = u_0 × (1 - q^n)/(1 - q) si q ≠ 1', 'S_n = n × u_0 si q = 1'],
+    traps: ['Confondre + (arithmétique) et × (géométrique)', 'Oublier le cas q = 1', 'Erreur sur la formule de somme (n termes ou n+1 termes ?)'],
+    exercises: [
+      { q: 'u_0 = 2 et q = 3. Quelle est u_4 ?', choices: ['162', '54', '486', '18'], correct: 0, expl: 'u_4 = 2 × 3^4 = 2 × 81 = 162 ✓' },
+      { q: 'Somme des 5 premiers termes d\'une suite géométrique de raison 2 et u_0 = 1 ?', choices: ['31', '16', '63', '32'], correct: 0, expl: 'S_5 = 1 × (1-2^5)/(1-2) = (1-32)/(-1) = 31 ✓' }
+    ]
+  },
+  {
+    id: 'fonctions_variations',
+    name: 'Fonctions — Variations & continuité',
+    icon: '∫',
+    tag: 'Fonctions',
+    summary: 'Étude du sens de variation d\'une fonction par le signe de sa dérivée. Théorème des valeurs intermédiaires.',
+    methods: [
+      { title: 'Tableau de variations', items: ['Calculer f\'(x)', 'Étudier le signe de f\'(x)', 'Déduire le sens de variation', 'Calculer les extrémums'] },
+      { title: 'TVI (Théorème valeurs intermédiaires)', items: ['f continue sur [a,b]', 'f(a) et f(b) de signes opposés', '→ ∃ c ∈ ]a,b[ tel que f(c) = 0'] }
+    ],
+    formulas: ['f\'(x) > 0 → f croissante', 'f\'(x) < 0 → f décroissante', 'f\'(x) = 0 → éventuel extremum'],
+    traps: ['Oublier d\'étudier le domaine de définition', 'Confondre extremum local et global', 'Signe de f\' ≠ signe de f'],
+    exercises: [
+      { q: 'f(x) = x² - 4x + 3. Sur quel intervalle f est-elle décroissante ?', choices: [']-∞ ; 2]', '[2 ; +∞[', ']-∞ ; 3]', '[0 ; +∞['], correct: 0, expl: 'f\'(x) = 2x - 4. f\'(x) < 0 ⟺ 2x - 4 < 0 ⟺ x < 2. Donc f décroissante sur ]-∞ ; 2] ✓' }
+    ]
+  },
+  {
+    id: 'derivees',
+    name: 'Calcul de dérivées',
+    icon: '∂',
+    tag: 'Fonctions',
+    summary: 'Maîtrise des règles de dérivation : fonctions usuelles, somme, produit, quotient, composée.',
+    methods: [
+      { title: 'Fonctions usuelles', items: ['(x^n)\' = n·x^(n-1)', '(e^x)\' = e^x', '(ln x)\' = 1/x', '(sin x)\' = cos x', '(cos x)\' = -sin x'] },
+      { title: 'Opérations', items: ['(u+v)\' = u\' + v\'', '(uv)\' = u\'v + uv\'', '(u/v)\' = (u\'v - uv\')/v²', '(u∘v)\' = v\' × u\'∘v'] }
+    ],
+    formulas: ['(ax+b)\' = a', '(e^(ax+b))\' = a·e^(ax+b)', '(ln(ax+b))\' = a/(ax+b)'],
+    traps: ['Oublier la règle de la chaîne pour les composées', 'Signe dans (u/v)\'', '(ln x)\' défini seulement pour x > 0'],
+    exercises: [
+      { q: 'Quelle est la dérivée de f(x) = e^(2x) + 3x² ?', choices: ['2e^(2x) + 6x', 'e^(2x) + 6x', '2e^(2x) + 3x', '2e^x + 6x'], correct: 0, expl: '(e^(2x))\' = 2e^(2x) et (3x²)\' = 6x. Donc f\'(x) = 2e^(2x) + 6x ✓' }
+    ]
+  },
+  {
+    id: 'probabilites',
+    name: 'Probabilités',
+    icon: '◎',
+    tag: 'Probabilités',
+    summary: 'Probabilités conditionnelles, indépendance, loi binomiale, loi des grands nombres.',
+    methods: [
+      { title: 'Probabilités conditionnelles', items: ['P(A|B) = P(A∩B) / P(B)', 'Formule des probabilités totales', 'Arbre de probabilités pour les calculs'] },
+      { title: 'Loi binomiale B(n,p)', items: ['n expériences identiques et indépendantes', 'P(X=k) = C(n,k) × p^k × (1-p)^(n-k)', 'E(X) = np, V(X) = np(1-p)'] }
+    ],
+    formulas: ['P(A|B) = P(A∩B)/P(B)', 'P(A) = P(A|B)P(B) + P(A|B̄)P(B̄)', 'P(X=k) = C(n,k)·p^k·(1-p)^(n-k)'],
+    traps: ['Confondre P(A|B) et P(B|A)', 'Vérifier l\'indépendance avant d\'utiliser P(A∩B)=P(A)P(B)', 'Ne pas confondre C(n,k) et P(n,k)'],
+    exercises: [
+      { q: 'X suit une loi B(10, 0.5). Quelle est l\'espérance E(X) ?', choices: ['5', '2.5', '10', '0.5'], correct: 0, expl: 'E(X) = np = 10 × 0.5 = 5 ✓' }
+    ]
+  },
+  {
+    id: 'stats',
+    name: 'Statistiques',
+    icon: '▦',
+    tag: 'Statistiques',
+    summary: 'Statistiques descriptives : moyenne, médiane, quartiles, écart-type, variances.',
+    methods: [
+      { title: 'Indicateurs de position', items: ['Moyenne : x̄ = Σ(n_i × x_i) / N', 'Médiane : valeur qui partage en 2 parties égales', 'Quartiles Q1 (25%) et Q3 (75%)'] },
+      { title: 'Indicateurs de dispersion', items: ['Étendue = max - min', 'Écart interquartile : IQ = Q3 - Q1', 'Variance V = Σ(x_i - x̄)² × n_i / N', 'Écart-type σ = √V'] }
+    ],
+    formulas: ['x̄ = Σ(n_i × x_i)/N', 'σ = √(E(X²) - [E(X)]²)', 'IQ = Q3 - Q1'],
+    traps: ['Confondre écart-type et variance', 'Médiane ≠ moyenne', 'Oublier de vérifier si N est pair ou impair pour la médiane'],
+    exercises: [
+      { q: 'Données : 2, 4, 4, 6, 8, 10. Quelle est la médiane ?', choices: ['5', '4', '6', '5.67'], correct: 0, expl: 'N=6 (pair). Médiane = (valeur rang 3 + valeur rang 4)/2 = (4+6)/2 = 5 ✓' }
+    ]
+  }
+];
+
+const AUTOMATISMES = [
+  { id: 'a1', title: 'Calcul mental rapide', formula: 'ab = ?', desc: 'Tables de multiplication jusqu\'à 20×20, carrés, cubes' },
+  { id: 'a2', title: 'Identités remarquables', formula: '(a+b)² = a²+2ab+b²', desc: '(a-b)², (a+b)(a-b) = a²-b²' },
+  { id: 'a3', title: 'Dérivées usuelles', formula: '(xⁿ)\' = nxⁿ⁻¹', desc: 'e^x, ln x, sin x, cos x — à connaître par cœur' },
+  { id: 'a4', title: 'Factorisation', formula: 'ax²+bx = x(ax+b)', desc: 'Savoir factoriser rapidement par inspection' },
+  { id: 'a5', title: 'Équations du 2nd degré', formula: 'Δ = b²-4ac', desc: 'x = (-b ± √Δ) / 2a — calculer Δ immédiatement' },
+  { id: 'a6', title: 'Terme général suites', formula: 'u_n = u_0 + nr', desc: 'Arithmétique et géométrique à sortir directement' },
+  { id: 'a7', title: 'Somme géométrique', formula: 'S = u₀(1-qⁿ)/(1-q)', desc: 'Savoir écrire sans hésitation si q ≠ 1' },
+  { id: 'a8', title: 'Probabilité conditionnelle', formula: 'P(A|B) = P(A∩B)/P(B)', desc: 'Formule à activer instantanément' },
+  { id: 'a9', title: 'Loi binomiale', formula: 'P(X=k) = C(n,k)p^k(1-p)^(n-k)', desc: 'Espérance np, variance np(1-p)' },
+  { id: 'a10', title: 'Lecture de tableau stat', formula: 'Q1, Q2, Q3', desc: 'Localiser médiane et quartiles rapidement' },
+  { id: 'a11', title: 'Valeur absolue', formula: '|x| < a ⟺ -a < x < a', desc: 'Résoudre inéquations avec valeur absolue' },
+  { id: 'a12', title: 'Logarithme néperien', formula: 'ln(ab) = ln a + ln b', desc: 'ln(a/b), ln(aⁿ), ln(1) = 0, ln(e) = 1' }
+];
+
+/* ────────────────────────────────────────
+   DATA — TEXTES ORAL
+──────────────────────────────────────── */
+const TEXTS = [
+  { id: 't1', num: '01', title: 'Incipit de Candide', author: 'Voltaire', work: 'Candide ou l\'Optimisme', genre: 'Roman philosophique', century: 'XVIII',
+    resume: 'Présentation naïve et idéalisée du château de Thunder-ten-tronckh et de ses habitants. L\'ironie de Voltaire transparaît dès les premières lignes dans le portrait hyperbolique du baron.',
+    cpi: { contenu: 'Portrait du baron et de la vie idyllique au château. Présentation de Candide comme un jeune homme naïf.', procede: 'Ironie voltairienne, hyperboles, accumulation d\'adjectifs mélioratifs, litotes, antiphrase.', intention: 'Critiquer la philosophie optimiste de Leibniz ("tout est pour le mieux dans le meilleur des mondes"), dénoncer l\'aristocratie et ses prétentions.' },
+    questions: ['Comment Voltaire utilise-t-il l\'ironie dans ce passage ?', 'Quel portrait de la société est dressé ?', 'En quoi Candide est-il présenté comme un personnage naïf ?']
+  },
+  { id: 't2', num: '02', title: 'Scène de rencontre avec la vieille', author: 'Voltaire', work: 'Candide ou l\'Optimisme', genre: 'Roman philosophique', century: 'XVIII',
+    resume: 'Récit des malheurs de la vieille, démontrant que le mal est universel et réfutant l\'optimisme de Pangloss. La vieille incarne une vision pessimiste de la condition humaine.',
+    cpi: { contenu: 'La vieille raconte ses souffrances extraordinaires : esclavage, violences, humiliations.', procede: 'Accumulation, gradation dramatique, registre tragique teinté d\'humour noir, discours direct.', intention: 'Montrer que le mal existe partout et pour tous, quelle que soit la condition sociale. Réfutation empirique de l\'optimisme.' },
+    questions: ['Quel est le rôle de la vieille dans l\'argumentation de Voltaire ?', 'Comment le récit des malheurs est-il construit ?', 'Qu\'est-ce que ce passage dit sur la condition humaine ?']
+  },
+  { id: 't3', num: '03', title: 'Dénouement — Le jardin', author: 'Voltaire', work: 'Candide ou l\'Optimisme', genre: 'Roman philosophique', century: 'XVIII',
+    resume: 'Candide rejette la philosophie de Pangloss au profit de l\'action concrète : "il faut cultiver notre jardin". Conclusion pragmatique du conte philosophique.',
+    cpi: { contenu: 'Débat final entre Pangloss et Candide. Choix de la vie simple et productive.', procede: 'Dialogue philosophique, formule sentencieuse finale, registre didactique, ton résigné puis résolu.', intention: 'Proposer un idéal de vie pratique : rejet de la métaphysique vaine au profit du travail, de la communauté, de l\'engagement concret.' },
+    questions: ['Que signifie "cultiver notre jardin" ?', 'Comment ce dénouement répond-il à l\'ensemble du conte ?', 'Quelle philosophie Voltaire défend-il finalement ?']
+  },
+  { id: 't4', num: '04', title: 'Le Spleen de Paris — Incipit', author: 'Charles Baudelaire', work: 'Le Spleen de Paris', genre: 'Poème en prose', century: 'XIX',
+    resume: 'Dédicace à Arsène Houssaye expliquant le projet du recueil : créer une poésie de la vie moderne, sans rime ni rythme imposé, adaptée à la ville et à ses hasards.',
+    cpi: { contenu: 'Baudelaire définit son projet poétique : une prose musicale et souple, adaptée aux "mouvements lyriques de l\'âme".', procede: 'Métatextualité, oxymores ("tête serpentine"), métaphore du serpent pour la structure fragmentée.', intention: 'Révolutionner la forme poétique, adapter la poésie à la modernité urbaine, liberté totale de la forme.' },
+    questions: ['Comment Baudelaire définit-il son nouveau projet poétique ?', 'Pourquoi choisit-il la prose plutôt que le vers ?', 'Que symbolise l\'image du serpent ?']
+  },
+  { id: 't5', num: '05', title: 'L\'Étranger — Incipit', author: 'Albert Camus', work: 'L\'Étranger', genre: 'Roman', century: 'XX',
+    resume: 'Mort de la mère de Meursault. Ton neutre, détaché, sans affect apparent. Phrase célèbre : "Aujourd\'hui, maman est morte." Présentation d\'un personnage absurde.',
+    cpi: { contenu: 'Annonce de la mort de la mère, préparatifs pour l\'enterrement, relation distante de Meursault au monde.', procede: 'Style blanc (Barthes), parataxe, absence d\'adjectifs affectifs, imparfait/passé composé de distance.', intention: 'Incarner la philosophie de l\'absurde : indifférence du monde, quête de sens vaine, authenticité de l\'être sans illusion.' },
+    questions: ['Que révèle le style de Meursault sur sa vision du monde ?', 'Comment le style "blanc" construit-il le personnage ?', 'En quoi cet incipit est-il philosophique ?']
+  },
+  { id: 't6', num: '06', title: 'Le Rouge et le Noir — Incipit', author: 'Stendhal', work: 'Le Rouge et le Noir', genre: 'Roman réaliste', century: 'XIX',
+    resume: 'Description de Verrières, ville de province. Présentation de la société bourgeoise dominée par la valeur de l\'argent et la médiocrité provinciale.',
+    cpi: { contenu: 'Tableau de la ville : la fabrique Sorel, le maire M. de Rênal, les mœurs provinciales.', procede: 'Focalisation externe, description réaliste, ironie discrète, style indirect libre.', intention: 'Critique de la société de la Restauration, empire de l\'argent et de l\'hypocrisie, opposition rouge/noir : action vs religion.' },
+    questions: ['Quelle image de la province française Stendhal donne-t-il ?', 'Comment la critique sociale est-elle présente dès l\'incipit ?', 'Que symbolise le titre "Le Rouge et le Noir" ?']
+  },
+  { id: 't7', num: '07', title: 'Madame Bovary — Incipit', author: 'Gustave Flaubert', work: 'Madame Bovary', genre: 'Roman réaliste', century: 'XIX',
+    resume: 'Arrivée de Charles Bovary au collège. Description de son chapeau grotesque, premier signe de sa médiocrité et de son inadaptation sociale.',
+    cpi: { contenu: 'Présentation de Charles enfant, son chapeau, sa désorientation sociale, le regard de classe.', procede: 'Ekphrasis (description du chapeau), grotesque, focalisation collective ("nous"), ironie de situation.', intention: 'Montrer dès l\'incipit la médiocrité de Charles, créer la distance du lecteur, préparer le drame d\'Emma aspirant à autre chose.' },
+    questions: ['Quel rôle joue la description du chapeau ?', 'Pourquoi Flaubert choisit-il un narrateur collectif ("nous") ?', 'En quoi cet incipit annonce-t-il le roman ?']
+  },
+  { id: 't8', num: '08', title: 'Bel-Ami — Scène du miroir', author: 'Guy de Maupassant', work: 'Bel-Ami', genre: 'Roman réaliste', century: 'XIX',
+    resume: 'Georges Duroy contemple son reflet, satisfait de sa beauté. Scène emblématique du narcissisme du personnage et de sa stratégie de séduction sociale.',
+    cpi: { contenu: 'Duroy se regarde, analyse ses atouts physiques, élabore mentalement sa stratégie de conquête.', procede: 'Focalisation interne, style indirect libre, champ lexical du reflet et de la vanité, futur de projection.', intention: 'Critiquer l\'arrivisme et le cynisme de la Troisième République, où séduction et apparence remplacent le mérite.' },
+    questions: ['Que révèle la scène du miroir sur le caractère de Duroy ?', 'Comment Maupassant construit-il la critique sociale ?', 'Quel regard l\'auteur porte-t-il sur son personnage ?']
+  },
+  { id: 't9', num: '09', title: 'Les Fleurs du Mal — Spleen IV', author: 'Charles Baudelaire', work: 'Les Fleurs du Mal', genre: 'Poésie', century: 'XIX',
+    resume: '"Quand le ciel bas et lourd pèse comme un couvercle..." Expression du spleen baudelairien : enfermement, angoisse existentielle, oppression du monde.',
+    cpi: { contenu: 'Images d\'enfermement, de lourdeur, d\'angoisse montante. L\'espoir est "vaincu" et l\'Angoisse victorieuse.', procede: 'Allégories, sonnet modifié, gradation dramatique, métaphore filée de l\'enfermement, consonances sourdes.', intention: 'Exprimer l\'état d\'âme splenétique : l\'ennui existentiel, l\'oppression de vivre, la mélancolie moderne.' },
+    questions: ['Comment Baudelaire exprime-t-il le spleen ?', 'Quelles images dominent dans ce poème ?', 'Quel est le rapport entre le moi et le monde extérieur ?']
+  },
+  { id: 't10', num: '10', title: 'Alcools — Zone', author: 'Guillaume Apollinaire', work: 'Alcools', genre: 'Poésie', century: 'XX',
+    resume: 'Poème d\'ouverture : promenade dans Paris moderne, mélange du vieux et du nouveau, de la religion et de l\'industrie. Rupture avec la tradition poétique.',
+    cpi: { contenu: 'Déambulation du poète dans Paris, Tour Eiffel, aéroplanes, faubourgs, mêlés aux références chrétiennes.', procede: 'Absence de ponctuation, vers libres, simultanéisme, juxtaposition, registre lyrique et trivial.', intention: 'Célébrer la modernité tout en exprimant la mélancolie du temps qui passe, réconcilier poésie et vie moderne.' },
+    questions: ['Comment Apollinaire renouvelle-t-il la poésie dans Zone ?', 'Quel rapport entretient le poème avec la modernité ?', 'Que symbolise la Tour Eiffel ici ?']
+  },
+  { id: 't11', num: '11', title: 'Rhinocéros — Scène finale', author: 'Eugène Ionesco', work: 'Rhinocéros', genre: 'Théâtre de l\'absurde', century: 'XX',
+    resume: 'Bérenger, seul humain restant, refuse de se transformer en rhinocéros malgré la pression sociale. Monologue de résistance et d\'identité.',
+    cpi: { contenu: 'Bérenger hésite, contemple sa laideur d\'homme, puis choisit de rester lui-même contre tous.', procede: 'Monologue dramatique, antithèses, hyperboles comiques, soliloque, accumulation d\'exclamations.', intention: 'Allégorie de la montée du nazisme et du totalitarisme, affirmation de l\'individu contre la conformité collective, résistance morale.' },
+    questions: ['Que symbolise la rhinocérite ?', 'Comment Bérenger affirme-t-il son humanité ?', 'Quelle leçon politique se dégage de cette scène ?']
+  },
+  { id: 't12', num: '12', title: 'En attendant Godot — Scène d\'attente', author: 'Samuel Beckett', work: 'En attendant Godot', genre: 'Théâtre de l\'absurde', century: 'XX',
+    resume: 'Vladimir et Estragon attendent Godot qui ne vient pas. Dialogues sur le temps, l\'ennui, la mémoire défaillante. Métaphore de l\'absurde existentiel.',
+    cpi: { contenu: 'Les deux personnages s\'occupent, se disputent, oublient, recommencent. Le temps ne passe pas.', procede: 'Dialogues fragmentés, répétitions, stichomythies, comique de répétition, silence et pause comme langage.', intention: 'Mettre en scène l\'absurde de la condition humaine : attente d\'un sens qui ne vient jamais, habitude qui remplace la vie.' },
+    questions: ['Que représente Godot ?', 'Comment Beckett met-il en scène l\'absurde ?', 'Quel est le sens de la répétition dans cette pièce ?']
+  },
+  { id: 't13', num: '13', title: 'Discours de la méthode — Incipit', author: 'René Descartes', work: 'Discours de la méthode', genre: 'Essai philosophique', century: 'XVII',
+    resume: '"Le bon sens est la chose du monde la mieux partagée." Incipit célèbre sur la raison universelle. Fondation de la méthode cartésienne.',
+    cpi: { contenu: 'Descartes affirme que la raison est égale en tous, mais que c\'est son usage qui différencie les hommes.', procede: 'Paradoxe inaugural, ironie légère, démonstration par étapes, ton modeste et assuré à la fois.', intention: 'Fonder une nouvelle méthode de pensée rationnelle, rompre avec la scolastique médiévale, établir le doute méthodique.' },
+    questions: ['Que signifie l\'affirmation sur le "bon sens" ?', 'Comment Descartes se positionne-t-il face aux autres philosophes ?', 'Quelle méthode Descartes propose-t-il ?']
+  },
+  { id: 't14', num: '14', title: 'Les Misérables — Monsieur Myriel', author: 'Victor Hugo', work: 'Les Misérables', genre: 'Roman', century: 'XIX',
+    resume: 'Portrait de Mgr Myriel, évêque généreux qui accueillera Jean Valjean. Incarnation de la bonté absolue et de la charité chrétienne.',
+    cpi: { contenu: 'Description de la maison, du mode de vie simple de Myriel, de ses dons aux pauvres.', procede: 'Portrait moral par les actes, ironie douce, contraste entre dignité épiscopale et humilité réelle, style didactique.', intention: 'Incarner un idéal humaniste et chrétien, préparer la transformation de Valjean, critiquer les institutions par contraste.' },
+    questions: ['Comment Hugo construit-il le portrait de Myriel ?', 'Quel idéal humaniste est représenté ?', 'Quel rôle joue ce personnage dans la structure du roman ?']
+  },
+  { id: 't15', num: '15', title: 'Lorenzaccio — Monologue de Lorenzo', author: 'Alfred de Musset', work: 'Lorenzaccio', genre: 'Drame romantique', century: 'XIX',
+    resume: 'Lorenzo explique à Filippo Strozzi sa déchéance morale et son plan pour assassiner Alexandre de Médicis. Confession d\'un idéaliste corrompu.',
+    cpi: { contenu: 'Lorenzo révèle sa double vie, sa corruption apparente, son projet d\'action politique par le meurtre.', procede: 'Tirade lyrique, métaphore du "manteau de plomb", registre tragique, antithèse idéalisme/réalisme.', intention: 'Questionner l\'efficacité de l\'action politique, thème du héros désabusé, nihilisme romantique, inutilité du sacrifice.' },
+    questions: ['Comment Lorenzo justifie-t-il sa vie de débauche ?', 'Qu\'est-ce que le "meurtre nécessaire" selon lui ?', 'En quoi Lorenzo est-il un héros romantique ?']
+  },
+  { id: 't16', num: '16', title: 'La Cantatrice Chauve — Scène des Martin', author: 'Eugène Ionesco', work: 'La Cantatrice Chauve', genre: 'Théâtre de l\'absurde', century: 'XX',
+    resume: 'M. et Mme Martin se "découvrent" progressivement comme mari et femme dans une conversation surréaliste. Critique du langage conventionnel et des automatismes sociaux.',
+    cpi: { contenu: 'Les Martin échangent des coïncidences de plus en plus improbables pour "prouver" qu\'ils se connaissent.', procede: 'Syllogismes parodiques, logique absurde, répétitions, progression comique, dénouement paradoxal.', intention: 'Parodier la bourgeoisie et ses conventions, critiquer le langage vidé de sens, montrer l\'incommunicabilité fondamentale entre êtres humains.' },
+    questions: ['Comment Ionesco parodie-t-il le langage quotidien ?', 'Que dit cette scène sur les relations humaines ?', 'Qu\'est-ce que l\'absurde dans ce contexte ?']
+  }
+];
+
+/* ────────────────────────────────────────
+   DATA — FRANÇAIS
+──────────────────────────────────────── */
+const FR_METHODS = [
+  {
+    title: 'Introduction (12-15 lignes)',
+    content: `<ul>
+      <li><strong>Amorce</strong> : partir d'un fait général (époque, genre, courant), jamais d'une question rhétorique banale</li>
+      <li><strong>Présentation du texte</strong> : auteur, œuvre, date, situation dans l'œuvre, registre dominant</li>
+      <li><strong>Problématique</strong> : une vraie question littéraire (pas "Comment l'auteur...?" mais "En quoi / Dans quelle mesure...")</li>
+      <li><strong>Annonce du plan</strong> : 2 ou 3 axes clairement formulés, liés à la problématique</li>
+    </ul>`
+  },
+  {
+    title: 'Première partie (axe 1)',
+    content: `<ul>
+      <li>Idée directrice en une phrase</li>
+      <li>Pour chaque sous-partie : citer un <strong>procédé précis</strong> → analyser son effet → interpréter en lien avec l'idée</li>
+      <li>3 à 4 exemples appuyés par des citations courtes et pertinentes</li>
+      <li>Transition vers l'axe 2 : souligner la limite de l'axe 1</li>
+    </ul>`
+  },
+  {
+    title: 'Deuxième partie (axe 2)',
+    content: `<ul>
+      <li>Idem axe 1 mais approfondissement ou nuance de l'axe 1</li>
+      <li>Ne pas répéter les mêmes procédés — chercher d'autres angles</li>
+      <li>Si 3 parties : transition vers axe 3</li>
+    </ul>`
+  },
+  {
+    title: 'Conclusion (8-10 lignes)',
+    content: `<ul>
+      <li><strong>Bilan synthétique</strong> : répondre directement à la problématique</li>
+      <li><strong>Ouverture</strong> : lier à un autre texte du même auteur, au même genre, à une œuvre étudiée — jamais une question sans réponse</li>
+      <li>Ne pas apporter d'éléments nouveaux</li>
+    </ul>`
+  }
+];
+
+const FR_FORMULAS = [
+  { title: 'Problématique type', formula: '"En quoi ce passage..."', desc: '"...illustre-t-il / subvertit-il / révèle-t-il... [enjeu littéraire]"' },
+  { title: 'Analyser un procédé', formula: 'Procédé → Effet → Sens', desc: '"La métaphore... produit un effet de... ce qui révèle..."' },
+  { title: 'Transition réussie', formula: 'Bilan + Limite + Annonce', desc: '"Ainsi... Mais cette lecture ne suffit pas... En effet..."' },
+  { title: 'Vocabulaire d\'analyse', formula: 'Registre + Tonalité', desc: 'tragique, lyrique, épique, satirique, didactique, ironique, pathétique' },
+  { title: 'Citations', formula: '≤ 2 lignes entre guillemets', desc: 'Intégrer syntaxiquement : "l\'auteur souligne que [citation]"' },
+  { title: 'Introduction amorce', formula: 'Époque → Courant → Texte', desc: '"Au XVIIIe siècle, les Lumières... C\'est dans ce contexte que Voltaire..."' }
+];
+
+const INTRO_CHECKLIST = [
+  'L\'amorce est originale et pertinente (pas de question banale)',
+  'L\'auteur, l\'œuvre et la date sont mentionnés',
+  'Le genre et le registre sont précisés',
+  'La problématique est une vraie question littéraire',
+  'Le plan est annoncé avec 2 ou 3 axes clairs',
+  'L\'introduction fait 12-15 lignes'
+];
+
+const DEV_CHECKLIST = [
+  'Chaque partie commence par une idée directrice',
+  'Les citations sont courtes et entre guillemets',
+  'Chaque procédé est nommé précisément (anaphore, métaphore...)',
+  'L\'effet du procédé est analysé',
+  'L\'interprétation est reliée à la problématique',
+  'Les transitions entre parties sont rédigées',
+  'Le vocabulaire littéraire est varié et précis',
+  'Pas de paraphrase — vraie analyse'
+];
+
+const CONCLU_CHECKLIST = [
+  'La problématique reçoit une réponse directe',
+  'Les deux axes sont résumés en 2-3 phrases',
+  'L\'ouverture est pertinente et développée',
+  'Aucun élément nouveau n\'est introduit',
+  'La conclusion fait 8-10 lignes'
+];
+
+const TRAINING_TEXTS = [
+  { title: 'Extrait — Victor Hugo, Notre-Dame de Paris (1831)', text: 'Ce fut une espèce de commotion électrique. Un tressaillement de pitié et de sympathie parcourut la foule, et un grand bruit de voix et de gestes éclata. Frollo avait entendu. Il releva la tête. Au bas de lui, au-dessous du balcon, dans la place, une belle jeune fille dansait et jouait du tambourin.' },
+  { title: 'Extrait — Émile Zola, Germinal (1885)', text: 'Dans la plaine rase, sous la nuit sans étoiles, d\'une obscurité et d\'une épaisseur d\'encre, un homme suivait seul la grande route de Marchiennes à Montsou, dix kilomètres de pavé coupant tout droit, à travers les champs de betteraves.' },
+  { title: 'Extrait — Honoré de Balzac, Le Père Goriot (1835)', text: 'Madame Vauquer, née de Conflans, est une vieille femme qui, depuis quarante ans, tient à Paris une pension bourgeoise établie rue Neuve-Sainte-Geneviève, entre le quartier latin et le faubourg Saint-Marceau.' },
+  { title: 'Extrait — Albert Camus, La Peste (1947)', text: 'Les curieux événements qui font l\'objet de cette chronique se sont produits en 194., à Oran. De l\'avis général, ils n\'y étaient pas à leur place, sortant un peu de l\'ordinaire. À première vue, Oran est, en effet, une ville ordinaire et rien de plus qu\'une préfecture française de la côte algérienne.' },
+  { title: 'Extrait — Jean-Paul Sartre, La Nausée (1938)', text: 'Il faut que je dise comment je vois cette table, la rue, les gens, mon paquet de tabac, puisque c\'est cela qui a changé. Il faut déterminer exactement l\'étendue et la nature de ce changement.' }
+];
+
+/* ────────────────────────────────────────
+   PLANNING
+──────────────────────────────────────── */
+const WEEK_PLAN = [
+  { day: 'Lun', tasks: ['Suites arithmétiques (révision)', 'Suites géométriques (révision)', 'Introduction commentaire (méthode)', '2 exercices type bac maths'] },
+  { day: 'Mar', tasks: ['Fonctions variations & continuité', 'Calcul de dérivées (×30 min)', 'Textes oral 01-04 (lecture + résumé)', 'Checklist commentaire'] },
+  { day: 'Mer', tasks: ['Probabilités complètes', 'Loi binomiale (exercices)', 'Textes oral 05-08', 'Entraînement commentaire (texte aléatoire)'] },
+  { day: 'Jeu', tasks: ['Statistiques (tous indicateurs)', 'Mode bac maths (sujet chronométré)', 'Textes oral 09-12', 'Plan commentaire sur texte Balzac'] },
+  { day: 'Ven', tasks: ['Révision automatismes (×1h)', 'Exercices type bac (tout chapitre)', 'Textes oral 13-16', 'Entraînement oral à voix haute'] },
+  { day: 'Sam', tasks: ['Sujet bac blanc maths (3h)', 'Relecture notes français', 'Répétition des 16 textes', 'Simulateur examinateur oral'] },
+  { day: 'Dim', tasks: ['Révision ciblée points faibles', 'Flash révision maths (1h)', 'Récitation des introductions orales', 'Repos et préparation mentale'] }
+];
+
+/* ────────────────────────────────────────
+   INIT
+──────────────────────────────────────── */
+function init() {
+  // Init tasks
+  WEEK_PLAN.forEach((day, di) => {
+    if (!state.tasks[di]) state.tasks[di] = {};
+    day.tasks.forEach((t, ti) => {
+      if (state.tasks[di][ti] === undefined) state.tasks[di][ti] = false;
+    });
+  });
+
+  // Init chapters
+  CHAPTERS.forEach(ch => {
+    if (!state.chapters[ch.id]) state.chapters[ch.id] = 'none'; // none / review / mastered
+  });
+
+  // Init automatismes
+  AUTOMATISMES.forEach(a => {
+    if (!state.automatismes[a.id]) state.automatismes[a.id] = 'none';
+  });
+
+  // Init texts
+  TEXTS.forEach(t => {
+    if (!state.texts[t.id]) state.texts[t.id] = 'none'; // none / seen / review / mastered
+  });
+
+  // Init checklists
+  ['intro','dev','conclu'].forEach(k => {
+    if (!state.checklists[k]) state.checklists[k] = {};
+  });
+
+  renderAll();
+}
+
+function renderAll() {
+  renderWeek();
+  renderTodayTasks();
+  renderChapters();
+  renderAutomatismes();
+  renderTexts();
+  renderFrMethod();
+  renderFrFormulas();
+  renderChecklists();
+  renderSuivi();
+  renderRevision();
+  updateAllProgress();
+}
+
+/* ────────────────────────────────────────
+   COUNTDOWN
+──────────────────────────────────────── */
+function updateCountdown() {
+  // Bac de français : fin mai 2025 environ (date approximative)
+  const bacDate = new Date('2025-06-18');
+  const now = new Date();
+  const diff = Math.max(0, Math.ceil((bacDate - now) / (1000*60*60*24)));
+  document.getElementById('countdownDays').textContent = diff;
+}
+updateCountdown();
+
+/* ────────────────────────────────────────
+   QUOTES
+──────────────────────────────────────── */
+const QUOTES = [
+  { text: 'La discipline est le pont entre les objectifs et l\'accomplissement.', author: 'Jim Rohn' },
+  { text: 'Le succès, c\'est tomber sept fois et se relever huit.', author: 'Proverbe japonais' },
+  { text: 'Ce qui ne se mesure pas ne s\'améliore pas.', author: 'Lord Kelvin' },
+  { text: 'Le génie c\'est 1% d\'inspiration et 99% de transpiration.', author: 'Thomas Edison' },
+  { text: 'N\'attends pas le moment idéal. Prends le moment et rends-le idéal.', author: 'George Bernard Shaw' },
+  { text: 'La connaissance s\'acquiert par l\'expérience, tout le reste n\'est que de l\'information.', author: 'Albert Einstein' },
+  { text: 'Le seul endroit où le succès vient avant le travail, c\'est dans le dictionnaire.', author: 'Vidal Sassoon' }
+];
+
+function updateQuote() {
+  const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  const el = document.getElementById('dailyQuote');
+  if (el) { el.textContent = `"${q.text}"`; el.parentElement.querySelector('.quote-author').textContent = `— ${q.author} · Citation du jour`; }
+}
+updateQuote();
+
+/* ────────────────────────────────────────
+   NAVIGATION
+──────────────────────────────────────── */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const navs = document.querySelectorAll('.nav-item');
+  navs.forEach(n => { if (n.getAttribute('onclick') && n.getAttribute('onclick').includes(id)) n.classList.add('active'); });
+}
+
+/* ────────────────────────────────────────
+   WEEK & TASKS
+──────────────────────────────────────── */
+function renderWeek() {
+  const grid = document.getElementById('weekGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const today = new Date().getDay(); // 0=dim
+  WEEK_PLAN.forEach((day, di) => {
+    const tasks = day.tasks;
+    const done = tasks.filter((_, ti) => state.tasks[di] && state.tasks[di][ti]).length;
+    const card = document.createElement('div');
+    card.className = 'day-card' + (done === tasks.length ? ' done' : '') + (di === 0 ? ' active' : '');
+    card.innerHTML = `<div class="day-num">${di+1}</div><div class="day-name">${day.day}</div><div class="day-tasks">${done}/${tasks.length}</div>`;
+    card.onclick = () => showDayTasks(di);
+    grid.appendChild(card);
+  });
+}
+
+function showDayTasks(di) {
+  // Highlight day card
+  document.querySelectorAll('.day-card').forEach((c,i) => { c.classList.toggle('active', i===di); });
+  renderTodayTasks(di);
+}
+
+function renderTodayTasks(dayIdx = 0) {
+  const list = document.getElementById('todayTasks');
+  if (!list) return;
+  list.innerHTML = '';
+  const day = WEEK_PLAN[dayIdx];
+  day.tasks.forEach((task, ti) => {
+    const done = state.tasks[dayIdx] && state.tasks[dayIdx][ti];
+    const item = document.createElement('div');
+    item.className = 'task-item' + (done ? ' completed' : '');
+    item.innerHTML = `<div class="task-check">${done ? '✓' : ''}</div><div class="task-text">${task}</div><div class="task-time">${['maths','probabilités','suites','dérivées','automatismes','statistiques','bac'].some(k => task.toLowerCase().includes(k)) ? '<span class="tag tag-math">Maths</span>' : ['commentaire','français','checklist','texte','balzac'].some(k => task.toLowerCase().includes(k)) ? '<span class="tag tag-fr">Français</span>' : '<span class="tag tag-oral">Oral</span>'}</div>`;
+    item.onclick = () => toggleTask(dayIdx, ti);
+    list.appendChild(item);
+  });
+  updateTaskStats(dayIdx);
+}
+
+function toggleTask(di, ti) {
+  if (!state.tasks[di]) state.tasks[di] = {};
+  state.tasks[di][ti] = !state.tasks[di][ti];
+  save();
+  renderTodayTasks(di);
+  renderWeek();
+}
+
+function updateTaskStats(dayIdx = 0) {
+  const day = WEEK_PLAN[dayIdx];
+  const total = day.tasks.length;
+  const done = day.tasks.filter((_,ti) => state.tasks[dayIdx] && state.tasks[dayIdx][ti]).length;
+  const el = document.getElementById('tasksDone');
+  if (el) el.textContent = `${done}/${total}`;
+}
+
+/* ────────────────────────────────────────
+   PROGRESS
+──────────────────────────────────────── */
+function updateAllProgress() {
+  // Math chapters
+  const chs = CHAPTERS.length;
+  const chMastered = CHAPTERS.filter(c => state.chapters[c.id] === 'mastered').length;
+  const mathPct = Math.round(chMastered/chs*100);
+  setBar('mathBar', 'mathPct', mathPct);
+
+  // Automatismes
+  const autos = AUTOMATISMES.length;
+  const autoMastered = AUTOMATISMES.filter(a => state.automatismes[a.id] === 'mastered').length;
+  const autoPct = Math.round(autoMastered/autos*100);
+  setBar('autoBar', 'autoPct', autoPct);
+  setBar('autoProgBar', 'autoProgPct', autoPct);
+
+  // French checklist
+  const allChecks = [...INTRO_CHECKLIST, ...DEV_CHECKLIST, ...CONCLU_CHECKLIST];
+  const totalChecks = allChecks.length;
+  let checkedCount = 0;
+  ['intro','dev','conclu'].forEach(k => {
+    if (state.checklists[k]) checkedCount += Object.values(state.checklists[k]).filter(Boolean).length;
+  });
+  const frPct = Math.round(checkedCount/totalChecks*100);
+  setBar('frBar', 'frPct', frPct);
+
+  // Oral texts
+  const tMastered = TEXTS.filter(t => state.texts[t.id] === 'mastered').length;
+  const tSeen = TEXTS.filter(t => state.texts[t.id] === 'seen').length;
+  const tReview = TEXTS.filter(t => state.texts[t.id] === 'review').length;
+  const oralPct = Math.round((tMastered + tSeen*0.5)/TEXTS.length*100);
+  setBar('oralBar', 'oralPct', oralPct);
+  setBar('oralProgBar', 'oralProgPct', oralPct);
+
+  // Global
+  const global = Math.round((mathPct + autoPct + frPct + oralPct) / 4);
+  const globalEl = document.getElementById('globalPct');
+  if (globalEl) globalEl.textContent = global + '%';
+  setBarRaw('globalBar', global);
+
+  // Scores estimés
+  const mathScore = Math.round(mathPct * 0.2);
+  const frScore = Math.round(frPct * 0.2);
+  const oralScoreVal = Math.round(oralPct * 0.2);
+  setScoreEl('mathScore', mathScore + '/20');
+  setScoreEl('frScore', frScore + '/20');
+  setScoreEl('oralScore', oralScoreVal + '/20');
+  setScoreEl('estimScore', Math.round((mathScore+frScore+oralScoreVal)/3) + '/20');
+
+  // Text counts
+  setEl('textsMastered', tMastered);
+  setEl('textsSeen', tSeen);
+  setEl('textsReview', tReview);
+
+  // Work time
+  const totalH = state.workTime.reduce((a,b)=>a+b,0);
+  setEl('totalTime', totalH + 'h');
+
+  // Revision badge
+  const badge = document.getElementById('revisionBadge');
+  const reviewCount = CHAPTERS.filter(c => state.chapters[c.id] === 'review').length +
+    AUTOMATISMES.filter(a => state.automatismes[a.id] === 'review').length +
+    TEXTS.filter(t => state.texts[t.id] === 'review').length;
+  if (badge) badge.textContent = reviewCount;
+}
+
+function setBar(barId, pctId, pct) {
+  const bar = document.getElementById(barId);
+  const pctEl = document.getElementById(pctId);
+  if (bar) bar.style.width = pct + '%';
+  if (pctEl) pctEl.textContent = pct + '%';
+}
+
+function setBarRaw(id, pct) {
+  const el = document.getElementById(id);
+  if (el) el.style.width = pct + '%';
+}
+
+function setEl(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+function setScoreEl(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+/* ────────────────────────────────────────
+   CHAPTERS
+──────────────────────────────────────── */
+function renderChapters() {
+  const list = document.getElementById('chapterList');
+  if (!list) return;
+  list.innerHTML = '';
+  CHAPTERS.forEach(ch => {
+    const status = state.chapters[ch.id] || 'none';
+    const card = document.createElement('div');
+    card.className = 'chapter-card';
+    card.innerHTML = `
+      <div class="chapter-header" onclick="toggleChapter('${ch.id}')">
+        <div class="chapter-icon">${ch.icon}</div>
+        <div class="chapter-info">
+          <div class="chapter-name">${ch.name}</div>
+          <div class="chapter-meta"><span class="tag tag-math">${ch.tag}</span></div>
+        </div>
+        <div style="margin-right:12px">
+          ${status==='mastered' ? '<span class="badge badge-green">✓ Maîtrisé</span>' : status==='review' ? '<span class="badge badge-red">⚑ À revoir</span>' : '<span class="badge badge-muted">○ Non commencé</span>'}
+        </div>
+        <div class="chapter-toggle" id="toggle-${ch.id}">▾</div>
+      </div>
+      <div class="chapter-body" id="body-${ch.id}">
+        <div style="margin-top:14px;font-size:13px;color:var(--muted2);line-height:1.7">${ch.summary}</div>
+        <div class="chapter-sections">
+          ${ch.methods.map(m => `
+            <div class="method-block">
+              <div class="method-title">📐 ${m.title}</div>
+              <div class="method-content"><ul>${m.items.map(i=>`<li>${i}</li>`).join('')}</ul></div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="method-block" style="margin-top:12px">
+          <div class="method-title">📎 Formules clés</div>
+          <div class="method-content" style="display:flex;flex-wrap:wrap;gap:6px">
+            ${ch.formulas.map(f=>`<span class="auto-formula">${f}</span>`).join('')}
+          </div>
+        </div>
+        <div class="trap-block">
+          <div class="trap-title">⚠ Pièges classiques</div>
+          <div style="font-size:12px;color:#d97070"><ul style="padding-left:14px">${ch.traps.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+        </div>
+        <div style="margin-top:14px">
+          <div class="method-title" style="margin-bottom:10px">✎ Exercices type bac</div>
+          ${ch.exercises.map((ex,ei) => `
+            <div class="exercise-block" id="ex-${ch.id}-${ei}">
+              <div class="exercise-q">${ex.q}</div>
+              <div class="exercise-choices">
+                ${ex.choices.map((c,ci) => `<button class="choice-btn" onclick="answerEx('${ch.id}',${ei},${ci},${ex.correct},'${ex.expl.replace(/'/g,"\\'")}')">
+                  <span style="color:var(--muted);margin-right:6px">${String.fromCharCode(65+ci)}.</span>${c}
+                </button>`).join('')}
+              </div>
+              <div class="exercise-feedback" id="fb-${ch.id}-${ei}"></div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="chapter-actions">
+          <button class="btn btn-green" onclick="setChapter('${ch.id}','mastered')">✓ Je maîtrise</button>
+          <button class="btn btn-red" onclick="setChapter('${ch.id}','review')">⚑ À revoir</button>
+          <button class="btn btn-ghost" onclick="setChapter('${ch.id}','none')">↺ Reset</button>
+        </div>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+function toggleChapter(id) {
+  const body = document.getElementById('body-' + id);
+  const toggle = document.getElementById('toggle-' + id);
+  const open = body.classList.toggle('open');
+  if (toggle) toggle.textContent = open ? '▴' : '▾';
+}
+
+function setChapter(id, status) {
+  state.chapters[id] = status;
+  save();
+  renderChapters();
+  renderRevision();
+}
+
+function answerEx(chId, exIdx, chosen, correct, expl) {
+  const container = document.getElementById(`ex-${chId}-${exIdx}`);
+  const btns = container.querySelectorAll('.choice-btn');
+  btns.forEach((b,i) => {
+    b.onclick = null;
+    if (i === correct) b.classList.add('correct');
+    else if (i === chosen && chosen !== correct) b.classList.add('wrong');
+  });
+  const fb = document.getElementById(`fb-${chId}-${exIdx}`);
+  fb.className = 'exercise-feedback ' + (chosen === correct ? 'correct' : 'wrong');
+  fb.textContent = (chosen === correct ? '✓ Correct ! ' : '✗ Incorrect. ') + expl;
+}
+
+/* ────────────────────────────────────────
+   AUTOMATISMES
+──────────────────────────────────────── */
+function renderAutomatismes() {
+  const grid = document.getElementById('autosGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  AUTOMATISMES.forEach(a => {
+    const status = state.automatismes[a.id] || 'none';
+    const card = document.createElement('div');
+    card.className = 'auto-card' + (status==='mastered' ? ' mastered' : status==='review' ? ' review' : '');
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div class="auto-title">${a.title}</div>
+        ${status==='mastered' ? '<span class="badge badge-green">✓</span>' : status==='review' ? '<span class="badge badge-red">⚑</span>' : ''}
+      </div>
+      <div class="auto-formula">${a.formula}</div>
+      <div style="font-size:11px;color:var(--muted2);margin-top:6px">${a.desc}</div>
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button class="btn btn-green" style="padding:4px 10px;font-size:10px" onclick="setAuto('${a.id}','mastered')">✓ Maîtrisé</button>
+        <button class="btn btn-red" style="padding:4px 10px;font-size:10px" onclick="setAuto('${a.id}','review')">⚑ À revoir</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function setAuto(id, status) {
+  state.automatismes[id] = status;
+  save();
+  renderAutomatismes();
+}
+
+/* ────────────────────────────────────────
+   MATH TABS
+──────────────────────────────────────── */
+function showMathTab(tab) {
+  ['chapitres','automatismes','modebac'].forEach(t => {
+    const el = document.getElementById('math-' + t);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('#page-maths .btn').forEach((b,i) => {
+    b.className = i === ['chapitres','automatismes','modebac'].indexOf(tab) ? 'btn btn-primary' : 'btn btn-outline';
+  });
+  if (tab === 'modebac') renderBacSubject();
+}
+
+function renderBacSubject() {
+  const c = document.getElementById('bacSubject');
+  if (!c || c.children.length > 0) return;
+  const subject = [
+    { title: 'Exercice 1 — Suites (6 pts)', q: 'Soit (u_n) la suite définie par u_0 = 2 et u_{n+1} = 3u_n - 4.<br>1. Montrer que la suite (v_n) définie par v_n = u_n - 2 est géométrique.<br>2. En déduire l\'expression de u_n en fonction de n.<br>3. Calculer la limite de u_n quand n tend vers +∞.' },
+    { title: 'Exercice 2 — Fonctions (7 pts)', q: 'Soit f(x) = x³ - 3x² + 2.<br>1. Calculer f\'(x).<br>2. Étudier les variations de f sur ℝ.<br>3. Dresser le tableau de variations complet.<br>4. Résoudre f(x) > 0 en utilisant ce tableau.' },
+    { title: 'Exercice 3 — Probabilités (7 pts)', q: 'Une urne contient 4 boules rouges et 6 boules bleues. On tire 3 boules avec remise.<br>1. Quelle loi suit X = "nombre de boules rouges tirées" ?<br>2. Calculer P(X = 2).<br>3. Calculer E(X) et interpréter.<br>4. P(X ≥ 1) = ?' }
+  ];
+  subject.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.style.marginBottom = '12px';
+    div.innerHTML = `<div class="method-title">${s.title}</div><div class="method-content" style="font-size:13px;color:var(--text);line-height:1.9">${s.q}</div>`;
+    c.appendChild(div);
+  });
+}
+
+/* ────────────────────────────────────────
+   TIMER
+──────────────────────────────────────── */
+let timerInterval = null;
+let timerSeconds = 3*60*60;
+let timerRunning = false;
+
+function startTimer() {
+  if (timerRunning) return;
+  timerRunning = true;
+  timerInterval = setInterval(() => {
+    if (timerSeconds <= 0) { clearInterval(timerInterval); timerRunning = false; return; }
+    timerSeconds--;
+    updateTimerDisplay();
+  }, 1000);
+}
+
+function pauseTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = 3*60*60;
+  updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
+  const h = Math.floor(timerSeconds/3600);
+  const m = Math.floor((timerSeconds%3600)/60);
+  const s = timerSeconds % 60;
+  const el = document.getElementById('timerDisplay');
+  if (el) el.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+/* ────────────────────────────────────────
+   FRANÇAIS
+──────────────────────────────────────── */
+function renderFrMethod() {
+  const el = document.getElementById('frMethodSteps');
+  if (!el) return;
+  el.innerHTML = '';
+  FR_METHODS.forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'method-step';
+    div.innerHTML = `<h3>${m.title}</h3><div>${m.content}</div>`;
+    el.appendChild(div);
+  });
+}
+
+function renderFrFormulas() {
+  const el = document.getElementById('frFormulas');
+  if (!el) return;
+  el.innerHTML = '';
+  FR_FORMULAS.forEach(f => {
+    const card = document.createElement('div');
+    card.className = 'auto-card';
+    card.innerHTML = `<div class="auto-title">${f.title}</div><div class="auto-formula">${f.formula}</div><div style="font-size:11px;color:var(--muted2);margin-top:6px">${f.desc}</div>`;
+    el.appendChild(card);
+  });
+}
+
+function showFrTab(tab) {
+  ['methode','entrainement','checklist'].forEach(t => {
+    const el = document.getElementById('fr-' + t);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('#page-francais .btn').forEach((b,i) => {
+    b.className = i === ['methode','entrainement','checklist'].indexOf(tab) ? 'btn btn-primary' : 'btn btn-outline';
+  });
+}
+
+function generateText() {
+  const t = TRAINING_TEXTS[Math.floor(Math.random() * TRAINING_TEXTS.length)];
+  const el = document.getElementById('generatorText');
+  if (el) el.innerHTML = `<strong style="color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:.1em">${t.title}</strong><br><br>${t.text}`;
+}
+
+function saveFrTrain() {
+  const intro = document.getElementById('introText').value.trim();
+  const plan = document.getElementById('planText').value.trim();
+  const text = document.getElementById('generatorText').textContent.trim();
+  if (!intro && !plan) return;
+  if (!state.trainingSessions) state.trainingSessions = [];
+  state.trainingSessions.push({ date: new Date().toLocaleDateString('fr-FR'), intro, plan, text });
+  save();
+  renderSavedTrains();
+}
+
+function clearFrTrain() {
+  document.getElementById('introText').value = '';
+  document.getElementById('planText').value = '';
+}
+
+function renderSavedTrains() {
+  const el = document.getElementById('savedTrains');
+  if (!el) return;
+  if (!state.trainingSessions || state.trainingSessions.length === 0) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div class="section-title" style="margin-top:0">Sessions sauvegardées (${state.trainingSessions.length})</div>`;
+  state.trainingSessions.slice(-3).reverse().forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.style.marginBottom = '10px';
+    div.innerHTML = `<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span class="badge badge-muted">${s.date}</span><button class="btn btn-ghost" style="font-size:10px" onclick="deleteSession(${state.trainingSessions.length-1-i})">✕ Supprimer</button></div>
+    <div style="font-size:12px;color:var(--muted2);margin-bottom:8px">${s.text.substring(0,80)}...</div>
+    ${s.intro ? `<div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Introduction</div><div style="font-size:12px;color:var(--text);background:rgba(255,255,255,.02);padding:8px;border-radius:6px;white-space:pre-wrap">${s.intro}</div>` : ''}`;
+    el.appendChild(div);
+  });
+}
+
+function deleteSession(idx) {
+  state.trainingSessions.splice(idx, 1);
+  save();
+  renderSavedTrains();
+}
+
+/* ────────────────────────────────────────
+   CHECKLISTS
+──────────────────────────────────────── */
+function renderChecklists() {
+  renderChecklist('introChecklist', INTRO_CHECKLIST, 'intro');
+  renderChecklist('devChecklist', DEV_CHECKLIST, 'dev');
+  renderChecklist('concluChecklist', CONCLU_CHECKLIST, 'conclu');
+  updateChecklistScore();
+}
+
+function renderChecklist(elId, items, key) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.innerHTML = '';
+  items.forEach((item, i) => {
+    const checked = state.checklists[key] && state.checklists[key][i];
+    const div = document.createElement('div');
+    div.className = 'check-item' + (checked ? ' checked' : '');
+    div.innerHTML = `<div class="check-box">${checked ? '✓' : ''}</div><div class="check-label">${item}</div>`;
+    div.onclick = () => toggleCheck(key, i);
+    el.appendChild(div);
+  });
+}
+
+function toggleCheck(key, idx) {
+  if (!state.checklists[key]) state.checklists[key] = {};
+  state.checklists[key][idx] = !state.checklists[key][idx];
+  save();
+  renderChecklists();
+}
+
+function updateChecklistScore() {
+  const total = INTRO_CHECKLIST.length + DEV_CHECKLIST.length + CONCLU_CHECKLIST.length;
+  let checked = 0;
+  ['intro','dev','conclu'].forEach(k => { if (state.checklists[k]) checked += Object.values(state.checklists[k]).filter(Boolean).length; });
+  setEl('checklistScore', `${checked} / ${total}`);
+}
+
+/* ────────────────────────────────────────
+   ORAL TEXTS
+──────────────────────────────────────── */
+function renderTexts(filter = 'all') {
+  const grid = document.getElementById('textsGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const filtered = filter === 'all' ? TEXTS : TEXTS.filter(t => (state.texts[t.id]||'none') === filter || (filter==='none' && (state.texts[t.id]||'none')==='none'));
+  filtered.forEach(t => {
+    const status = state.texts[t.id] || 'none';
+    const card = document.createElement('div');
+    card.className = `text-card ${status}`;
+    card.innerHTML = `
+      <div class="text-num">Texte ${t.num} · ${t.century}e s.</div>
+      <div class="text-title">${t.title}</div>
+      <div class="text-author">${t.author} — ${t.work}</div>
+      <div class="text-status">
+        ${status==='mastered'?'<span class="badge badge-green">✓ Maîtrisé</span>':status==='seen'?'<span class="badge badge-gold">◉ Vu</span>':status==='review'?'<span class="badge badge-red">⚑ À retravailler</span>':'<span class="badge badge-muted">○ Non commencé</span>'}
+        <span class="badge badge-muted" style="margin-left:auto">${t.genre}</span>
+      </div>`;
+    card.onclick = () => openTextDetail(t.id);
+    grid.appendChild(card);
+  });
+}
+
+function filterTexts(f) { renderTexts(f); }
+
+function openTextDetail(id) {
+  const t = TEXTS.find(x => x.id === id);
+  if (!t) return;
+  const status = state.texts[t.id] || 'none';
+  const detail = document.getElementById('textDetail');
+  const inner = document.getElementById('textDetailInner');
+  inner.innerHTML = `
+    <button class="detail-close" onclick="closeTextDetail()" style="position:static;margin-bottom:20px;margin-left:auto;display:flex">✕</button>
+    <div class="eyebrow" style="font-size:10px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px">Texte ${t.num} · ${t.genre} · ${t.century}e siècle</div>
+    <div style="font-family:var(--font-display);font-size:26px;color:var(--white);margin-bottom:4px">${t.title}</div>
+    <div style="font-size:14px;color:var(--muted2);font-style:italic;margin-bottom:20px">${t.author} — ${t.work}</div>
+    <div class="divider"></div>
+    <div class="section-title" style="margin-top:16px">Résumé & enjeux</div>
+    <div style="font-size:13px;color:var(--text);line-height:1.8;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px">${t.resume}</div>
+    <div class="section-title">Analyse CPI (Contenu · Procédé · Intention)</div>
+    <div class="cpi-grid">
+      <div class="cpi-card"><div class="cpi-label">📄 Contenu</div><div class="cpi-content">${t.cpi.contenu}</div></div>
+      <div class="cpi-card"><div class="cpi-label">🔧 Procédés</div><div class="cpi-content">${t.cpi.procede}</div></div>
+      <div class="cpi-card"><div class="cpi-label">🎯 Intention</div><div class="cpi-content">${t.cpi.intention}</div></div>
+    </div>
+    <div class="section-title">Questions possibles à l'oral</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${t.questions.map(q=>`<div style="padding:10px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--muted2)">❓ ${q}</div>`).join('')}
+    </div>
+    <div class="section-title">Statut de révision</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn ${status==='mastered'?'btn-green':'btn-outline'}" onclick="setTextStatus('${t.id}','mastered')">✓ Maîtrisé</button>
+      <button class="btn ${status==='seen'?'btn-primary':'btn-outline'}" onclick="setTextStatus('${t.id}','seen')">◉ Vu</button>
+      <button class="btn ${status==='review'?'btn-red':'btn-outline'}" onclick="setTextStatus('${t.id}','review')">⚑ À retravailler</button>
+      <button class="btn btn-ghost" onclick="setTextStatus('${t.id}','none')">↺ Reset</button>
+    </div>
+  `;
+  detail.classList.add('open');
+}
+
+function closeTextDetail() {
+  document.getElementById('textDetail').classList.remove('open');
+}
+
+function setTextStatus(id, status) {
+  state.texts[id] = status;
+  save();
+  renderTexts();
+  updateAllProgress();
+  openTextDetail(id);
+}
+
+/* ────────────────────────────────────────
+   SUIVI
+──────────────────────────────────────── */
+function renderSuivi() {
+  renderTimeTracker();
+  renderSubjectProgress();
+  renderWeakPoints();
+}
+
+function renderTimeTracker() {
+  const el = document.getElementById('timeTracker');
+  if (!el) return;
+  el.innerHTML = '';
+  const maxH = Math.max(...state.workTime, 1);
+  WEEK_PLAN.forEach((day, i) => {
+    const h = state.workTime[i] || 0;
+    const pct = Math.round(h/maxH*100);
+    const div = document.createElement('div');
+    div.className = 'time-day';
+    div.innerHTML = `<div class="td-name">${day.day}</div><div class="td-hours">${h}h</div><div class="td-bar"><div class="td-fill" style="width:${pct}%"></div></div>`;
+    el.appendChild(div);
+  });
+}
+
+function renderSubjectProgress() {
+  const el = document.getElementById('subjectProgress');
+  if (!el) return;
+  const subj = [
+    { name: 'Chapitres maths', pct: Math.round(CHAPTERS.filter(c=>state.chapters[c.id]==='mastered').length/CHAPTERS.length*100), type: 'blue' },
+    { name: 'Automatismes', pct: Math.round(AUTOMATISMES.filter(a=>state.automatismes[a.id]==='mastered').length/AUTOMATISMES.length*100), type: '' },
+    { name: 'Commentaire (checklist)', pct: (() => { let c=0,t=0; ['intro','dev','conclu'].forEach(k=>{ const arr=k==='intro'?INTRO_CHECKLIST:k==='dev'?DEV_CHECKLIST:CONCLU_CHECKLIST; t+=arr.length; if(state.checklists[k]) c+=Object.values(state.checklists[k]).filter(Boolean).length; }); return Math.round(c/t*100); })(), type: '' },
+    { name: 'Textes oral', pct: Math.round(TEXTS.filter(t=>state.texts[t.id]==='mastered').length/TEXTS.length*100), type: 'green' }
+  ];
+  el.innerHTML = subj.map(s => `
+    <div class="progress-wrap">
+      <div class="progress-label"><span>${s.name}</span><span>${s.pct}%</span></div>
+      <div class="progress-bar"><div class="progress-fill ${s.type}" style="width:${s.pct}%"></div></div>
+    </div>`).join('');
+}
+
+function renderWeakPoints() {
+  const el = document.getElementById('weakPoints');
+  if (!el) return;
+  const weaks = [
+    ...CHAPTERS.filter(c => state.chapters[c.id] === 'review').map(c => ({ name: c.name, tag: 'Maths', goto: 'maths' })),
+    ...AUTOMATISMES.filter(a => state.automatismes[a.id] === 'review').map(a => ({ name: a.title, tag: 'Automatisme', goto: 'maths' })),
+    ...TEXTS.filter(t => state.texts[t.id] === 'review').map(t => ({ name: t.title, tag: 'Oral', goto: 'oral' }))
+  ];
+  if (weaks.length === 0) {
+    el.innerHTML = '<div style="padding:16px;font-size:13px;color:var(--muted);text-align:center">Aucun point faible identifié — continue comme ça !</div>';
+    return;
+  }
+  el.innerHTML = weaks.slice(0,6).map(w => `
+    <div class="weak-item" onclick="showPage('${w.goto}')">
+      <div class="weak-dot"></div>
+      <div class="weak-name">${w.name}</div>
+      <span class="tag ${w.goto==='maths'?'tag-math':'tag-oral'}">${w.tag}</span>
+    </div>`).join('');
+}
+
+function addWorkTime() {
+  const day = parseInt(document.getElementById('workDaySelect').value);
+  const hours = parseFloat(document.getElementById('workHoursInput').value) || 0;
+  state.workTime[day] = (state.workTime[day] || 0) + hours;
+  save();
+  renderSuivi();
+}
+
+/* ────────────────────────────────────────
+   RÉVISION
+──────────────────────────────────────── */
+function renderRevision() {
+  const el = document.getElementById('revisionList');
+  if (!el) return;
+  const items = [
+    ...CHAPTERS.filter(c => state.chapters[c.id] === 'review').map(c => ({ name: c.name, type: 'Maths', badge: 'tag-math', action: () => { showPage('maths'); showMathTab('chapitres'); } })),
+    ...AUTOMATISMES.filter(a => state.automatismes[a.id] === 'review').map(a => ({ name: a.title, type: 'Automatisme', badge: 'tag-math', action: () => { showPage('maths'); showMathTab('automatismes'); } })),
+    ...TEXTS.filter(t => state.texts[t.id] === 'review').map(t => ({ name: t.title, type: 'Oral', badge: 'tag-oral', action: () => openTextDetail(t.id) }))
+  ];
+  
+  const badge = document.getElementById('revisionBadge');
+  if (badge) badge.textContent = items.length;
+
+  if (items.length === 0) {
+    el.innerHTML = `<div style="text-align:center;padding:48px 20px"><div style="font-size:48px;margin-bottom:16px">✓</div><div style="font-family:var(--font-display);font-size:24px;color:var(--white);margin-bottom:8px">Tout est à jour !</div><div style="color:var(--muted2);font-size:14px">Aucun élément marqué "à revoir".<br>Continue à progresser.</div></div>`;
+    return;
+  }
+  el.innerHTML = `<div style="font-size:13px;color:var(--muted2);margin-bottom:20px">${items.length} élément${items.length>1?'s':''} à retravailler en priorité</div>`;
+  const list = document.createElement('div');
+  list.className = 'task-list';
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'task-item';
+    div.style.cursor = 'pointer';
+    div.innerHTML = `<div class="weak-dot" style="flex-shrink:0"></div><div class="task-text">${item.name}</div><span class="tag ${item.badge}">${item.type}</span>`;
+    div.onclick = item.action;
+    list.appendChild(div);
+  });
+  el.appendChild(list);
+}
+
+/* ────────────────────────────────────────
+   BOOT
+──────────────────────────────────────── */
+init();
+renderSavedTrains();
+
+// Keyboard shortcut: number keys for pages
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+  const map = { '1': 'dashboard', '2': 'maths', '3': 'francais', '4': 'oral', '5': 'suivi', '6': 'revision' };
+  if (map[e.key]) showPage(map[e.key]);
+});
+
+// Close modal on escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeTextDetail();
+});
+</script>
+
 </body>
 </html>
